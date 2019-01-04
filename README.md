@@ -2,17 +2,9 @@
 
 [![Build Status](https://travis-ci.org/jamwaffles/ssh1106.svg?branch=master)](https://travis-ci.org/jamwaffles/ssh1106)
 
-[![CRIUS display showing the Rust logo](readme_banner.jpg?raw=true)](examples/image_i2c.rs)
+I2C and SPI (4 wire) driver for the SSH1106 OLED display for use with RTFM.
 
-> Note: Requires requires nightly 2018-08-27 or later. Install with `rustup override set nightly-2018-08-27`.
-
-I2C and SPI (4 wire) driver for the ssh1106 OLED display for use with RTFM.
-
-See the [announcement blog post](https://wapl.es/electronics/rust/2018/04/30/ssh1106-driver.html) for more information.
-
-## [Documentation](https://jamwaffles.github.io/ssh1106)
-
-## [Examples](examples)
+## [Documentation](https://docs.rs/sh1106)
 
 From [`examples/image_i2c.rs`](examples/image_i2c.rs):
 
