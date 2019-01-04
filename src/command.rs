@@ -1,5 +1,3 @@
-// Shamefully taken from https://github.com/EdgewaterDevelopment/rust-ssh1106
-
 use super::interface::DisplayInterface;
 
 /// ssh1106 Commands
