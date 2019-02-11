@@ -1,9 +1,24 @@
-//! Draw a square, circle and triangle on a 128x32px display.
+//! Draw the Rust logo centered on a 90 degree rotated 128x64px display
+//!
+//! Image was created with ImageMagick:
+//!
+//! ```bash
+//! convert rust.png -depth 1 gray:rust.raw
+//! ```
 //!
 //! This example is for the STM32F103 "Blue Pill" board using I2C1.
 //!
-//! Run on a Blue Pill with `cargo run --example graphics_i2c_128x32`, currently only works on
-//! nightly.
+//! Wiring connections are as follows for a CRIUS-branded display:
+//!
+//! ```
+//!      Display -> Blue Pill
+//! (black)  GND -> GND
+//! (red)    +5V -> VCC
+//! (yellow) SDA -> PB9
+//! (green)  SCL -> PB8
+//! ```
+//!
+//! Run on a Blue Pill with `cargo run --example rotation`.
 
 #![no_std]
 #![no_main]
@@ -15,8 +30,8 @@ extern crate stm32f1xx_hal as hal;
 
 use cortex_m_rt::ExceptionFrame;
 use cortex_m_rt::{entry, exception};
+use embedded_graphics::image::Image1BPP;
 use embedded_graphics::prelude::*;
-use embedded_graphics::primitives::{Circle, Line, Rect};
 use hal::i2c::{BlockingI2c, DutyCycle, Mode};
 use hal::prelude::*;
 use hal::stm32;
@@ -56,44 +71,24 @@ fn main() -> ! {
     );
 
     let mut disp: GraphicsMode<_> = Builder::new()
-        .with_size(DisplaySize::Display128x32)
+        // Set initial rotation at 90 degrees clockwise
+        .with_rotation(DisplayRotation::Rotate90)
         .connect_i2c(i2c)
         .into();
+
     disp.init().unwrap();
     disp.flush().unwrap();
 
-    let yoffset = 8;
+    // Contrived example to test builder and instance methods. Sets rotation to 270 degress
+    // or 90 degress counterclockwise
+    disp.set_rotation(DisplayRotation::Rotate270).unwrap();
 
-    disp.draw(
-        Line::new(
-            Coord::new(8, 16 + yoffset),
-            Coord::new(8 + 16, 16 + yoffset),
-        )
-        .with_stroke(Some(1u8.into()))
-        .into_iter(),
-    );
-    disp.draw(
-        Line::new(Coord::new(8, 16 + yoffset), Coord::new(8 + 8, yoffset))
-            .with_stroke(Some(1u8.into()))
-            .into_iter(),
-    );
-    disp.draw(
-        Line::new(Coord::new(8 + 16, 16 + yoffset), Coord::new(8 + 8, yoffset))
-            .with_stroke(Some(1u8.into()))
-            .into_iter(),
-    );
+    let (w, h) = disp.get_dimensions();
 
-    disp.draw(
-        Rect::new(Coord::new(48, yoffset), Coord::new(48 + 16, 16 + yoffset))
-            .with_stroke(Some(1u8.into()))
-            .into_iter(),
-    );
+    let im = Image1BPP::new(include_bytes!("./rust.raw"), 64, 64)
+        .translate(Coord::new(w as i32 / 2 - 64 / 2, h as i32 / 2 - 64 / 2));
 
-    disp.draw(
-        Circle::new(Coord::new(96, yoffset + 8), 8)
-            .with_stroke(Some(1u8.into()))
-            .into_iter(),
-    );
+    disp.draw(im.into_iter());
 
     disp.flush().unwrap();
 

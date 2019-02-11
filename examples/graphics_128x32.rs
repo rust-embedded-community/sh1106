@@ -1,18 +1,8 @@
-//! Draw a square, circle and triangle on the screen using the `embedded_graphics` crate.
+//! Draw a square, circle and triangle on a 128x32px display.
 //!
 //! This example is for the STM32F103 "Blue Pill" board using I2C1.
 //!
-//! Wiring connections are as follows for a CRIUS-branded display:
-//!
-//! ```
-//!      Display -> Blue Pill
-//! (black)  GND -> GND
-//! (red)    +5V -> VCC
-//! (yellow) SDA -> PB9
-//! (green)  SCL -> PB8
-//! ```
-//!
-//! Run on a Blue Pill with `cargo run --example graphics_i2c`, currently only works on nightly.
+//! Run on a Blue Pill with `cargo run --example graphics_128x32`.
 
 #![no_std]
 #![no_main]
@@ -64,35 +54,42 @@ fn main() -> ! {
         1000,
     );
 
-    let mut disp: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
-
+    let mut disp: GraphicsMode<_> = Builder::new()
+        .with_size(DisplaySize::Display128x32)
+        .connect_i2c(i2c)
+        .into();
     disp.init().unwrap();
     disp.flush().unwrap();
 
+    let yoffset = 8;
+
     disp.draw(
-        Line::new(Coord::new(8, 16 + 16), Coord::new(8 + 16, 16 + 16))
+        Line::new(
+            Coord::new(8, 16 + yoffset),
+            Coord::new(8 + 16, 16 + yoffset),
+        )
+        .with_stroke(Some(1u8.into()))
+        .into_iter(),
+    );
+    disp.draw(
+        Line::new(Coord::new(8, 16 + yoffset), Coord::new(8 + 8, yoffset))
             .with_stroke(Some(1u8.into()))
             .into_iter(),
     );
     disp.draw(
-        Line::new(Coord::new(8, 16 + 16), Coord::new(8 + 8, 16))
-            .with_stroke(Some(1u8.into()))
-            .into_iter(),
-    );
-    disp.draw(
-        Line::new(Coord::new(8 + 16, 16 + 16), Coord::new(8 + 8, 16))
+        Line::new(Coord::new(8 + 16, 16 + yoffset), Coord::new(8 + 8, yoffset))
             .with_stroke(Some(1u8.into()))
             .into_iter(),
     );
 
     disp.draw(
-        Rect::new(Coord::new(48, 16), Coord::new(48 + 16, 16 + 16))
+        Rect::new(Coord::new(48, yoffset), Coord::new(48 + 16, 16 + yoffset))
             .with_stroke(Some(1u8.into()))
             .into_iter(),
     );
 
     disp.draw(
-        Circle::new(Coord::new(96, 16 + 8), 8)
+        Circle::new(Coord::new(96, yoffset + 8), 8)
             .with_stroke(Some(1u8.into()))
             .into_iter(),
     );

@@ -1,4 +1,10 @@
-//! Endlessly fill the screen with characters from the alphabet
+//! Draw a 1 bit per pixel black and white image. On a 128x64 sh1106 display over I2C.
+//!
+//! Image was created with ImageMagick:
+//!
+//! ```bash
+//! convert rust.png -depth 1 gray:rust.raw
+//! ```
 //!
 //! This example is for the STM32F103 "Blue Pill" board using I2C1.
 //!
@@ -12,7 +18,7 @@
 //! (green)  SCL -> PB8
 //! ```
 //!
-//! Run on a Blue Pill with `cargo run --example terminal_i2c`, currently only works on nightly.
+//! Run on a Blue Pill with `cargo run --example image`.
 
 #![no_std]
 #![no_main]
@@ -22,9 +28,10 @@ extern crate cortex_m_rt as rt;
 extern crate panic_semihosting;
 extern crate stm32f1xx_hal as hal;
 
-use core::fmt::Write;
 use cortex_m_rt::ExceptionFrame;
 use cortex_m_rt::{entry, exception};
+use embedded_graphics::image::Image1BPP;
+use embedded_graphics::prelude::*;
 use hal::i2c::{BlockingI2c, DutyCycle, Mode};
 use hal::prelude::*;
 use hal::stm32;
@@ -63,19 +70,18 @@ fn main() -> ! {
         1000,
     );
 
-    let mut disp: TerminalMode<_> = Builder::new().connect_i2c(i2c).into();
-    disp.init().unwrap();
-    let _ = disp.clear();
+    let mut disp: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
 
-    /* Endless loop */
-    loop {
-        for c in 97..123 {
-            let _ = disp.write_str(unsafe { core::str::from_utf8_unchecked(&[c]) });
-        }
-        for c in 65..91 {
-            let _ = disp.write_str(unsafe { core::str::from_utf8_unchecked(&[c]) });
-        }
-    }
+    disp.init().unwrap();
+    disp.flush().unwrap();
+
+    let im = Image1BPP::new(include_bytes!("./rust.raw"), 64, 64).translate(Coord::new(32, 0));
+
+    disp.draw(im.into_iter());
+
+    disp.flush().unwrap();
+
+    loop {}
 }
 
 #[exception]

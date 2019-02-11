@@ -1,5 +1,4 @@
-//! Print "Hello world!" with "Hello rust!" underneath. Uses the `embedded_graphics` crate to draw
-//! the text with a 6x8 pixel font.
+//! Endlessly fill the screen with characters from the alphabet
 //!
 //! This example is for the STM32F103 "Blue Pill" board using I2C1.
 //!
@@ -13,7 +12,7 @@
 //! (green)  SCL -> PB8
 //! ```
 //!
-//! Run on a Blue Pill with `cargo run --example text_i2c`, currently only works on nightly.
+//! Run on a Blue Pill with `cargo run --example terminal`.
 
 #![no_std]
 #![no_main]
@@ -23,10 +22,9 @@ extern crate cortex_m_rt as rt;
 extern crate panic_semihosting;
 extern crate stm32f1xx_hal as hal;
 
+use core::fmt::Write;
 use cortex_m_rt::ExceptionFrame;
 use cortex_m_rt::{entry, exception};
-use embedded_graphics::fonts::Font6x8;
-use embedded_graphics::prelude::*;
 use hal::i2c::{BlockingI2c, DutyCycle, Mode};
 use hal::prelude::*;
 use hal::stm32;
@@ -65,26 +63,19 @@ fn main() -> ! {
         1000,
     );
 
-    let mut disp: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
-
+    let mut disp: TerminalMode<_> = Builder::new().connect_i2c(i2c).into();
     disp.init().unwrap();
-    disp.flush().unwrap();
+    let _ = disp.clear();
 
-    disp.draw(
-        Font6x8::render_str("Hello world!")
-            .with_stroke(Some(1u8.into()))
-            .into_iter(),
-    );
-    disp.draw(
-        Font6x8::render_str("Hello Rust!")
-            .with_stroke(Some(1u8.into()))
-            .translate(Coord::new(0, 16))
-            .into_iter(),
-    );
-
-    disp.flush().unwrap();
-
-    loop {}
+    /* Endless loop */
+    loop {
+        for c in 97..123 {
+            let _ = disp.write_str(unsafe { core::str::from_utf8_unchecked(&[c]) });
+        }
+        for c in 65..91 {
+            let _ = disp.write_str(unsafe { core::str::from_utf8_unchecked(&[c]) });
+        }
+    }
 }
 
 #[exception]

@@ -1,10 +1,5 @@
-//! Draw a 1 bit per pixel black and white image. On a 128x64 sh1106 display over I2C.
-//!
-//! Image was created with ImageMagick:
-//!
-//! ```bash
-//! convert rust.png -depth 1 gray:rust.raw
-//! ```
+//! Print "Hello world!" with "Hello rust!" underneath. Uses the `embedded_graphics` crate to draw
+//! the text with a 6x8 pixel font.
 //!
 //! This example is for the STM32F103 "Blue Pill" board using I2C1.
 //!
@@ -18,7 +13,7 @@
 //! (green)  SCL -> PB8
 //! ```
 //!
-//! Run on a Blue Pill with `cargo run --example image_i2c`, currently only works on nightly.
+//! Run on a Blue Pill with `cargo run --example text`.
 
 #![no_std]
 #![no_main]
@@ -30,7 +25,7 @@ extern crate stm32f1xx_hal as hal;
 
 use cortex_m_rt::ExceptionFrame;
 use cortex_m_rt::{entry, exception};
-use embedded_graphics::image::Image1BPP;
+use embedded_graphics::fonts::Font6x8;
 use embedded_graphics::prelude::*;
 use hal::i2c::{BlockingI2c, DutyCycle, Mode};
 use hal::prelude::*;
@@ -75,9 +70,17 @@ fn main() -> ! {
     disp.init().unwrap();
     disp.flush().unwrap();
 
-    let im = Image1BPP::new(include_bytes!("./rust.raw"), 64, 64).translate(Coord::new(32, 0));
-
-    disp.draw(im.into_iter());
+    disp.draw(
+        Font6x8::render_str("Hello world!")
+            .with_stroke(Some(1u8.into()))
+            .into_iter(),
+    );
+    disp.draw(
+        Font6x8::render_str("Hello Rust!")
+            .with_stroke(Some(1u8.into()))
+            .translate(Coord::new(0, 16))
+            .into_iter(),
+    );
 
     disp.flush().unwrap();
 
