@@ -1,11 +1,11 @@
-//! ssh1106 I2C Interface
+//! sh1106 I2C Interface
 
 use hal;
 
 use super::DisplayInterface;
 
 // TODO: Add to prelude
-/// ssh1106 I2C communication interface
+/// sh1106 I2C communication interface
 pub struct I2cInterface<I2C> {
     i2c: I2C,
     addr: u8,
@@ -15,7 +15,7 @@ impl<I2C> I2cInterface<I2C>
 where
     I2C: hal::blocking::i2c::Write,
 {
-    /// Create new ssh1106 I2C interface
+    /// Create new sh1106 I2C interface
     pub fn new(i2c: I2C, addr: u8) -> Self {
         Self { i2c, addr }
     }

@@ -1,4 +1,4 @@
-//! ssh1106 Communication Interface (I2C/SPI)
+//! sh1106 Communication Interface (I2C/SPI)
 //!
 //! These are the two supported interfaces for communicating with the display. They're used by the
 //! [builder](../builder/index.html) methods
@@ -9,31 +9,31 @@
 //! a type alias. Here's an example for the I2C1 on an STM32F103xx:
 //!
 //! ```rust
-//! # extern crate ssh1106;
+//! # extern crate sh1106;
 //! # extern crate stm32f103xx_hal as hal;
 //! # use hal::gpio::gpiob::{PB8, PB9};
 //! # use hal::gpio::{Alternate, OpenDrain};
 //! # use hal::i2c::I2c;
 //! # use hal::prelude::*;
 //! # use hal::stm32f103xx::I2C1;
-//! # use ssh1106::interface::I2cInterface;
+//! # use sh1106::interface::I2cInterface;
 //! type OledDisplay =
 //!   GraphicsMode<I2cInterface<I2c<I2C1, (PB8<Alternate<OpenDrain>>, PB9<Alternate<OpenDrain>>)>>>;
 //! ```
 //!
-//! [Example](https://github.com/jamwaffles/ssh1106/blob/master/examples/blinky_i2c.rs)
+//! [Example](https://github.com/jamwaffles/sh1106/blob/master/examples/blinky_i2c.rs)
 //!
 //! Here's one for SPI1 on an STM32F103xx:
 //!
 //! ```rust
-//! # extern crate ssh1106;
+//! # extern crate sh1106;
 //! # extern crate stm32f103xx_hal as hal;
 //! # use hal::gpio::gpioa::{PA5, PA6, PA7};
 //! # use hal::gpio::gpiob::PB1;
 //! # use hal::gpio::{Alternate, Floating, Input, Output, PushPull};
 //! # use hal::spi::Spi;
 //! # use hal::stm32f103xx::SPI1;
-//! # use ssh1106::interface::SpiInterface;
+//! # use sh1106::interface::SpiInterface;
 //! pub type OledDisplay = GraphicsMode<
 //!     SpiInterface<
 //!         Spi<
@@ -49,12 +49,12 @@
 //! >;
 //! ```
 //!
-//! [Example](https://github.com/jamwaffles/ssh1106/blob/master/examples/blinky.rs)
+//! [Example](https://github.com/jamwaffles/sh1106/blob/master/examples/blinky.rs)
 
 pub mod i2c;
 pub mod spi;
 
-/// A method of communicating with ssh1106
+/// A method of communicating with sh1106
 pub trait DisplayInterface {
     /// Send a batch of up to 8 commands to display.
     fn send_commands(&mut self, cmd: &[u8]) -> Result<(), ()>;

@@ -1,4 +1,4 @@
-//! Abstraction of different operating modes for the ssh1106
+//! Abstraction of different operating modes for the sh1106
 
 use crate::interface::DisplayInterface;
 use crate::properties::DisplayProperties;

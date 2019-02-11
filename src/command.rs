@@ -1,6 +1,6 @@
 use super::interface::DisplayInterface;
 
-/// ssh1106 Commands
+/// sh1106 Commands
 
 /// Commands
 #[derive(Debug)]
@@ -81,7 +81,7 @@ pub enum Command {
 }
 
 impl Command {
-    /// Send command to ssh1106
+    /// Send command to sh1106
     pub fn send<DI>(self, iface: &mut DI) -> Result<(), ()>
     where
         DI: DisplayInterface,

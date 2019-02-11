@@ -1,8 +1,8 @@
-# ssh1106 driver
+# SH1106 driver
 
-[![Build Status](https://travis-ci.org/jamwaffles/ssh1106.svg?branch=master)](https://travis-ci.org/jamwaffles/ssh1106)
+[![Build Status](https://travis-ci.org/jamwaffles/sh1106.svg?branch=master)](https://travis-ci.org/jamwaffles/sh1106)
 
-I2C and SPI (4 wire) driver for the SSH1106 OLED display for use with RTFM.
+I2C and SPI (4 wire) driver for the sh1106 OLED display for use with RTFM.
 
 ## [Documentation](https://docs.rs/sh1106)
 
@@ -14,7 +14,7 @@ From [`examples/image_i2c.rs`](examples/image_i2c.rs):
 extern crate cortex_m;
 extern crate embedded_graphics;
 extern crate embedded_hal as hal;
-extern crate ssh1106;
+extern crate sh1106;
 extern crate stm32f103xx_hal as blue_pill;
 
 use blue_pill::i2c::{DutyCycle, I2c, Mode};
@@ -22,7 +22,7 @@ use blue_pill::prelude::*;
 use embedded_graphics::Drawing;
 use embedded_graphics::image::{Image, Image1BPP};
 use embedded_graphics::transform::Transform;
-use ssh1106::{Builder, mode::GraphicsMode};
+use sh1106::{Builder, mode::GraphicsMode};
 
 fn main() {
     let dp = blue_pill::stm32f103xx::Peripherals::take().unwrap();

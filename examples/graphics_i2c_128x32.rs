@@ -14,8 +14,8 @@ use cortex_m_rt::ExceptionFrame;
 use cortex_m_rt::{entry, exception};
 use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::{Circle, Line, Rect};
-use ssh1106::prelude::*;
-use ssh1106::Builder;
+use sh1106::prelude::*;
+use sh1106::Builder;
 use stm32f103xx_hal::i2c::{BlockingI2c, DutyCycle, Mode};
 use stm32f103xx_hal::prelude::*;
 

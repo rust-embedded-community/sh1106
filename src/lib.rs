@@ -1,4 +1,4 @@
-//! ssh1106 OLED display driver
+//! sh1106 OLED display driver
 //!
 //! The driver must be initialised by passing an I2C or SPI interface peripheral to the [`Builder`],
 //! which will in turn create a driver instance in a particular mode. By default, the builder
@@ -16,7 +16,7 @@
 //! disp.set_pixel(10, 20, 1);
 //! ```
 //!
-//! See the [example](https://github.com/jamwaffles/ssh1106/blob/master/examples/graphics_i2c.rs)
+//! See the [example](https://github.com/jamwaffles/sh1106/blob/master/examples/graphics_i2c.rs)
 //! for more usage. The [entire `embedded_graphics` featureset](https://github.com/jamwaffles/embedded-graphics#features)
 //! is supported by this driver.
 //!
@@ -31,7 +31,7 @@
 //! disp.print_char('A');
 //! ```
 //!
-//! See the [example](https://github.com/jamwaffles/ssh1106/blob/master/examples/terminal_i2c.rs)
+//! See the [example](https://github.com/jamwaffles/sh1106/blob/master/examples/terminal_i2c.rs)
 //! for more usage.
 //!
 //! It's possible to customise the driver to suit your display/application. Take a look at the
@@ -40,7 +40,7 @@
 //! # Examples
 //!
 //! Examples can be found in
-//! [the examples/ folder](https://github.com/jamwaffles/ssh1106/blob/master/examples)
+//! [the examples/ folder](https://github.com/jamwaffles/sh1106/blob/master/examples)
 //!
 //! ## Write text to the display without a framebuffer
 //!
@@ -52,13 +52,13 @@
 //! extern crate cortex_m;
 //! extern crate embedded_hal as hal;
 //! extern crate panic_abort;
-//! extern crate ssh1106;
+//! extern crate sh1106;
 //! extern crate stm32f103xx_hal as blue_pill;
 //!
 //! use blue_pill::i2c::{DutyCycle, I2c, Mode};
 //! use blue_pill::prelude::*;
 //! use core::fmt::Write;
-//! use ssh1106::{mode::TerminalMode, Builder};
+//! use sh1106::{mode::TerminalMode, Builder};
 //!
 //! fn main() {
 //!     let dp = blue_pill::stm32f103xx::Peripherals::take().unwrap();
@@ -108,14 +108,14 @@
 //! extern crate embedded_graphics;
 //! extern crate embedded_hal as hal;
 //! extern crate panic_abort;
-//! extern crate ssh1106;
+//! extern crate sh1106;
 //! extern crate stm32f103xx_hal as blue_pill;
 //!
 //! use blue_pill::i2c::{DutyCycle, I2c, Mode};
 //! use blue_pill::prelude::*;
 //! use embedded_graphics::fonts::Font6x8;
 //! use embedded_graphics::prelude::*;
-//! use ssh1106::{mode::GraphicsMode, Builder};
+//! use sh1106::{mode::GraphicsMode, Builder};
 //!
 //! fn main() {
 //!     let dp = blue_pill::stm32f103xx::Peripherals::take().unwrap();
