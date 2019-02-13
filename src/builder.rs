@@ -8,15 +8,6 @@
 //!
 //! # Examples
 //!
-//! Connect over SPI with default rotation (0 deg) and size (128x64):
-//!
-//! ```rust,ignore
-//! let spi = /* SPI interface from your HAL of choice */;
-//! let dc = /* GPIO data/command select pin */;
-//!
-//! Builder::new().connect_spi(spi, dc);
-//! ```
-//!
 //! Connect over I2C, changing lots of options
 //!
 //! ```rust,ignore
@@ -41,11 +32,10 @@
 //! ```
 
 use hal;
-use hal::digital::OutputPin;
 
 use crate::displayrotation::DisplayRotation;
 use crate::displaysize::DisplaySize;
-use crate::interface::{I2cInterface, SpiInterface};
+use crate::interface::I2cInterface;
 use crate::mode::displaymode::DisplayMode;
 use crate::mode::raw::RawMode;
 use crate::properties::DisplayProperties;
@@ -106,20 +96,5 @@ impl Builder {
             self.rotation,
         );
         DisplayMode::<RawMode<I2cInterface<I2C>>>::new(properties)
-    }
-
-    /// Finish the builder and use SPI to communicate with the display
-    pub fn connect_spi<SPI, DC>(
-        &self,
-        spi: SPI,
-        dc: DC,
-    ) -> DisplayMode<RawMode<SpiInterface<SPI, DC>>>
-    where
-        SPI: hal::blocking::spi::Transfer<u8> + hal::blocking::spi::Write<u8>,
-        DC: OutputPin,
-    {
-        let properties =
-            DisplayProperties::new(SpiInterface::new(spi, dc), self.display_size, self.rotation);
-        DisplayMode::<RawMode<SpiInterface<SPI, DC>>>::new(properties)
     }
 }
