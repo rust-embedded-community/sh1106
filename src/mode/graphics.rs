@@ -88,7 +88,6 @@ where
         match display_size {
             DisplaySize::Display128x64 => self.properties.draw(&self.buffer),
             DisplaySize::Display128x32 => self.properties.draw(&self.buffer[0..512]),
-            DisplaySize::Display96x16 => self.properties.draw(&self.buffer[0..192]),
         }
     }
 
