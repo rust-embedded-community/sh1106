@@ -22,13 +22,13 @@
 //!
 //! The above examples will produce a [RawMode](../mode/raw/struct.RawMode.html) instance
 //! by default. You need to coerce them into a mode by specifying a type on assignment. For
-//! example, to use [`TerminalMode` mode](../mode/terminal/struct.TerminalMode.html):
+//! example, to use [`GraphicsMode` mode](../mode/graphics/struct.GraphicsMode.html):
 //!
 //! ```rust,ignore
 //! let spi = /* SPI interface from your HAL of choice */;
 //! let dc = /* GPIO data/command select pin */;
 //!
-//! let display: TerminalMode<_> = Builder::new().connect_spi(spi, dc).into();
+//! let display: GraphicsMode<_> = Builder::new().connect_spi(spi, dc).into();
 //! ```
 
 use hal;
@@ -78,9 +78,7 @@ impl Builder {
         Self { i2c_addr, ..*self }
     }
 
-    /// Set the rotation of the display to one of four values. Defaults to no rotation. Note that
-    /// 90º and 270º rotations are not supported by
-    /// [`TerminalMode`](../mode/terminal/struct.TerminalMode.html).
+    /// Set the rotation of the display to one of four values. Defaults to no rotation.
     pub fn with_rotation(&self, rotation: DisplayRotation) -> Self {
         Self { rotation, ..*self }
     }

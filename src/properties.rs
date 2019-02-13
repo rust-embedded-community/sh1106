@@ -44,8 +44,6 @@ where
         // TODO: Ability to turn charge pump on/off
         // Display must be off when performing this command
         Command::ChargePump(true).send(&mut self.iface)?;
-        // Command::LowerColStart(0).send(&mut self.iface)?;
-        // Command::UpperColStart(127).send(&mut self.iface)?;
 
         self.set_rotation(display_rotation)?;
 
@@ -59,7 +57,6 @@ where
         Command::VcomhDeselect(VcomhLevel::Auto).send(&mut self.iface)?;
         Command::AllOn(false).send(&mut self.iface)?;
         Command::Invert(false).send(&mut self.iface)?;
-        // Command::EnableScroll(false).send(&mut self.iface)?;
         Command::DisplayOn(true).send(&mut self.iface)?;
 
         Ok(())
