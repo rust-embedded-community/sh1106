@@ -1,6 +1,6 @@
 //! Container to store and set display properties
 
-use crate::command::Command;
+use crate::command::{Command, VcomhLevel};
 use crate::displayrotation::DisplayRotation;
 use crate::displaysize::DisplaySize;
 use crate::interface::DisplayInterface;
@@ -33,55 +33,34 @@ where
     /// column 0 on the left and column _(display_width - 1)_ on the right.
     pub fn init_column_mode(&mut self) -> Result<(), ()> {
         // TODO: Break up into nice bits so display modes can pick whathever they need
-        // let (_, display_height) = self.display_size.dimensions();
+        let (_, display_height) = self.display_size.dimensions();
+        let display_rotation = self.display_rotation;
 
-        // let display_rotation = self.display_rotation;
-
-        // Command::DisplayOn(false).send(&mut self.iface)?;
-        // Command::DisplayClockDiv(0x8, 0x0).send(&mut self.iface)?;
-        // Command::Multiplex(display_height - 1).send(&mut self.iface)?;
-        // Command::DisplayOffset(0).send(&mut self.iface)?;
-        // Command::StartLine(0).send(&mut self.iface)?;
+        Command::DisplayOn(false).send(&mut self.iface)?;
+        Command::DisplayClockDiv(0x8, 0x0).send(&mut self.iface)?;
+        Command::Multiplex(display_height - 1).send(&mut self.iface)?;
+        Command::DisplayOffset(0).send(&mut self.iface)?;
+        Command::StartLine(0).send(&mut self.iface)?;
+        // TODO: Ability to turn charge pump on/off
+        // Display must be off when performing this command
+        Command::ChargePump(true).send(&mut self.iface)?;
         // Command::LowerColStart(0).send(&mut self.iface)?;
         // Command::UpperColStart(127).send(&mut self.iface)?;
-        // // TODO: Ability to turn charge pump on/off
-        // Command::ChargePump(true).send(&mut self.iface)?;
-        // Command::ComPinConfig(true, false).send(&mut self.iface)?;
-        // Command::AddressMode(AddrMode::Horizontal).send(&mut self.iface)?;
 
-        // self.set_rotation(display_rotation)?;
+        self.set_rotation(display_rotation)?;
 
-        // // match self.display_size {
-        // //     DisplaySize::Display128x32 => Command::ComPinConfig(false, false).send(&mut self.iface),
-        // //     DisplaySize::Display128x64 => Command::ComPinConfig(true, false).send(&mut self.iface),
-        // //     DisplaySize::Display96x16 => Command::ComPinConfig(false, false).send(&mut self.iface),
-        // // }?;
+        match self.display_size {
+            DisplaySize::Display128x32 => Command::ComPinConfig(false).send(&mut self.iface),
+            DisplaySize::Display128x64 => Command::ComPinConfig(true).send(&mut self.iface),
+        }?;
 
-        // Command::Contrast(0x8F).send(&mut self.iface)?;
-        // Command::PreChargePeriod(0x1, 0xF).send(&mut self.iface)?;
-        // Command::VcomhDeselect(VcomhLevel::Auto).send(&mut self.iface)?;
-        // Command::AllOn(false).send(&mut self.iface)?;
-        // Command::Invert(false).send(&mut self.iface)?;
+        Command::Contrast(0x80).send(&mut self.iface)?;
+        Command::PreChargePeriod(0x1, 0xF).send(&mut self.iface)?;
+        Command::VcomhDeselect(VcomhLevel::Auto).send(&mut self.iface)?;
+        Command::AllOn(false).send(&mut self.iface)?;
+        Command::Invert(false).send(&mut self.iface)?;
         // Command::EnableScroll(false).send(&mut self.iface)?;
-        // Command::DisplayOn(true).send(&mut self.iface)?;
-
-        self.iface.send_commands(&[
-            0xAE, // 0 disp off
-            0xD5, // 1 clk div
-            0x50, // 2 suggested ratio
-            0xA8, 63, // 3 set multiplex
-            0xD3, 0x0,  // 5 display offset
-            0x40, // 7 start line
-            0xAD, 0x8B, // 8 enable charge pump
-            0xA1, // 10 seg remap 1, pin header at the top
-            0xC8, // 11 comscandec, pin header at the top
-            0xDA, 0x12, // 12 set compins
-            0x81, 0x80, // 14 set contrast
-            0xD9, 0x22, // 16 set precharge
-            0xDB, 0x35, // 18 set vcom detect
-            0xA6, // 20 display normal (non-inverted)
-            0xAF, // 21 disp on
-        ])?;
+        Command::DisplayOn(true).send(&mut self.iface)?;
 
         Ok(())
     }
