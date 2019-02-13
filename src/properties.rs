@@ -75,53 +75,7 @@ where
     /// and advance the position accordingly. Cf. `set_draw_area` to modify the affected area by
     /// this method.
     pub fn draw(&mut self, buffer: &[u8]) -> Result<(), ()> {
-        // let mut prev_page = 0;
-
-        // Command::PageStart(0.into()).send(&mut self.iface)?;
-
-        // for (count, byte) in buffer.iter().enumerate() {
-
-        //     let new_page = 0;
-
-        //     if new_page != prev_page {
-        //         prev_page = new_page;
-
-        //         Command::PageStart(0.into()).send(&mut self.iface)?;
-        //     }
-        // }
-
         self.iface.send_data(&buffer)?;
-
-        // let (width, _) = self.get_size().dimensions();
-        // // let w_u16 = width as u16;
-
-        // for page in 0..(buffer.len() / (width as usize).max(buffer.len())) {
-        //     let lower = page * width as usize;
-        //     let upper = lower + (width as usize).min(buffer.len());
-
-        //     let slice = &buffer[lower..upper];
-
-        //     Command::StartLine(0).send(&mut self.iface)?;
-        //     Command::PageStart((page as u8).into()).send(&mut self.iface)?;
-        //     self.iface.send_data(slice)?;
-        // }
-
-        // Command::PageStart(0.into()).send(&mut self.iface)?;
-        // self.iface.send_data(&buffer[0..128])?;
-        // Command::PageStart(1.into()).send(&mut self.iface)?;
-        // self.iface.send_data(&buffer[128..256])?;
-        // Command::PageStart(2.into()).send(&mut self.iface)?;
-        // self.iface.send_data(&buffer[256..384])?;
-        // Command::PageStart(3.into()).send(&mut self.iface)?;
-        // self.iface.send_data(&buffer[384..512])?;
-        // Command::PageStart(4.into()).send(&mut self.iface)?;
-        // self.iface.send_data(&buffer[512..640])?;
-        // Command::PageStart(5.into()).send(&mut self.iface)?;
-        // self.iface.send_data(&buffer[640..768])?;
-        // Command::PageStart(6.into()).send(&mut self.iface)?;
-        // self.iface.send_data(&buffer[768..896])?;
-        // Command::PageStart(7.into()).send(&mut self.iface)?;
-        // self.iface.send_data(&buffer[896..1024])?;
 
         Ok(())
     }

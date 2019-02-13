@@ -3,6 +3,7 @@
 use hal;
 
 use super::DisplayInterface;
+use crate::command::Page;
 
 // TODO: Add to prelude
 /// sh1106 I2C communication interface
@@ -38,33 +39,25 @@ where
     }
 
     fn send_data(&mut self, buf: &[u8]) -> Result<(), ()> {
+        // Display is always 128px wide
         const CHUNKLEN: usize = 128;
 
-        // 4 control bytes
         const BUFLEN: usize = CHUNKLEN + 1;
-
-        // TODO: Use screen width var instead of const
 
         // Noop if the data buffer is empty
         if buf.is_empty() {
             return Ok(());
         }
 
-        // TODO: Use commands. Page command starts at 0xb0, gets incremented for each page
-        let mut page = 0xb0;
+        let mut page = Page::Page0 as u8;
 
         // Display width plus 4 start bytes
         let mut writebuf: [u8; BUFLEN] = [0; BUFLEN];
 
-        writebuf[0] = 0x40; // Data
-                            // writebuf[1] = page; // Page address
-                            // writebuf[2] = 0x02; // Lower column address
-                            // writebuf[3] = 0x10; // Upper column address (always zero, base is 10h)
+        writebuf[0] = 0x40; // Following bytes are data bytes
 
         for chunk in buf.chunks(CHUNKLEN) {
-            writebuf[1] = page;
-
-            // Copy over all data from buffer, leaving the data command bytes intact
+            // Copy over all data from buffer, leaving the data command byte intact
             writebuf[1..BUFLEN].copy_from_slice(&chunk);
 
             self.i2c

@@ -96,21 +96,21 @@ impl Command {
 #[derive(Debug, Clone, Copy)]
 pub enum Page {
     /// Page 0
-    Page0 = 0b000,
+    Page0 = 0xb0,
     /// Page 1
-    Page1 = 0b001,
+    Page1 = 0xb1,
     /// Page 2
-    Page2 = 0b010,
+    Page2 = 0xb2,
     /// Page 3
-    Page3 = 0b011,
+    Page3 = 0xb3,
     /// Page 4
-    Page4 = 0b100,
+    Page4 = 0xb4,
     /// Page 5
-    Page5 = 0b101,
+    Page5 = 0xb5,
     /// Page 6
-    Page6 = 0b110,
+    Page6 = 0xb6,
     /// Page 7
-    Page7 = 0b111,
+    Page7 = 0xb7,
 }
 
 impl From<u8> for Page {
