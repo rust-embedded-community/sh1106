@@ -30,8 +30,11 @@ extern crate stm32f1xx_hal as hal;
 
 use cortex_m_rt::ExceptionFrame;
 use cortex_m_rt::{entry, exception};
-use embedded_graphics::image::Image1BPP;
 use embedded_graphics::prelude::*;
+use embedded_graphics::{
+    fonts::{Font, Font6x8},
+    image::Image1BPP,
+};
 use hal::i2c::{BlockingI2c, DutyCycle, Mode};
 use hal::prelude::*;
 use hal::stm32;
@@ -75,7 +78,16 @@ fn main() -> ! {
     disp.init().unwrap();
     disp.flush().unwrap();
 
-    let im = Image1BPP::new(include_bytes!("./rust.raw"), 64, 64).translate(Coord::new(32, 0));
+    let im =
+        Image1BPP::new(include_bytes!("./rust_heart.raw"), 86, 55).translate(Coord::new(21, 9));
+
+    disp.draw(
+        // Font6x8::render_str("For my Mayran")
+        Font6x8::render_str("Happy Valentines!")
+            .with_stroke(Some(1u8.into()))
+            .translate(Coord::new(21, 0))
+            .into_iter(),
+    );
 
     disp.draw(im.into_iter());
 
