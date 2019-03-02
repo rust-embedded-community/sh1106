@@ -2,14 +2,14 @@
 authors = ["James Waples <james@wapl.es>"]
 categories = ["embedded", "no-std"]
 description = "I2C driver for the SH1106 OLED display controller"
-documentation = "https://jamwaffles.github.io/sh1106"
+documentation = "https://docs.rs/sh1106"
 exclude = [".travis.yml", ".gitignore"]
 keywords = ["no-std", "sh1106", "oled", "embedded", "embedded-hal-driver"]
 license = "MIT OR Apache-2.0"
 name = "sh1106"
 readme = "README.md"
 repository = "https://github.com/jamwaffles/sh1106"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2018"
 [badges.travis-ci]
 branch = "master"
