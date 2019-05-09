@@ -21,8 +21,6 @@
 //!   GraphicsMode<I2cInterface<I2c<I2C1, (PB8<Alternate<OpenDrain>>, PB9<Alternate<OpenDrain>>)>>>;
 //! ```
 //!
-//! [Example](https://github.com/jamwaffles/sh1106/blob/master/examples/blinky_i2c.rs)
-//!
 //! Here's one for SPI1 on an STM32F103xx:
 //!
 //! ```rust
@@ -48,8 +46,6 @@
 //!     >,
 //! >;
 //! ```
-//!
-//! [Example](https://github.com/jamwaffles/sh1106/blob/master/examples/blinky.rs)
 
 pub mod i2c;
 pub mod spi;
