@@ -62,16 +62,18 @@ where
 
     /// Reset display
     // TODO: Move to a more appropriate place
-    pub fn reset<RST, DELAY>(&mut self, rst: &mut RST, delay: &mut DELAY)
+    pub fn reset<RST, DELAY>(&mut self, rst: &mut RST, delay: &mut DELAY) -> Result<(), ()>
     where
-        RST: OutputPin,
+        RST: OutputPin<Error = ()>,
         DELAY: DelayMs<u8>,
     {
-        rst.set_high();
+        rst.set_high()?;
         delay.delay_ms(1);
-        rst.set_low();
+        rst.set_low()?;
         delay.delay_ms(10);
-        rst.set_high();
+        rst.set_high()?;
+
+        Ok(())
     }
 
     /// Write out data to display

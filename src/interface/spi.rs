@@ -16,12 +16,12 @@ pub struct SpiInterface<SPI, DC, CS> {
 impl<SPI, DC, CS> SpiInterface<SPI, DC, CS>
 where
     SPI: hal::blocking::spi::Write<u8>,
-    DC: OutputPin,
-    CS: OutputPin,
+    DC: OutputPin<Error = ()>,
+    CS: OutputPin<Error = ()>,
 {
     /// Create new SPI interface for communciation with sh1106
     pub fn new(spi: SPI, dc: DC, mut cs: CS) -> Self {
-        cs.set_high();
+        cs.set_high().unwrap();
 
         Self { spi, dc, cs }
     }
@@ -30,30 +30,30 @@ where
 impl<SPI, DC, CS> DisplayInterface for SpiInterface<SPI, DC, CS>
 where
     SPI: hal::blocking::spi::Write<u8>,
-    DC: OutputPin,
-    CS: OutputPin,
+    DC: OutputPin<Error = ()>,
+    CS: OutputPin<Error = ()>,
 {
     fn send_commands(&mut self, cmds: &[u8]) -> Result<(), ()> {
-        self.cs.set_low();
-        self.dc.set_low();
+        self.cs.set_low()?;
+        self.dc.set_low()?;
 
         self.spi.write(&cmds).map_err(|_| ())?;
 
-        self.dc.set_high();
-        self.cs.set_high();
+        self.dc.set_high()?;
+        self.cs.set_high()?;
 
         Ok(())
     }
 
     fn send_data(&mut self, buf: &[u8]) -> Result<(), ()> {
-        self.cs.set_low();
+        self.cs.set_low()?;
 
         // 1 = data, 0 = command
-        self.dc.set_high();
+        self.dc.set_high()?;
 
         self.spi.write(&buf).map_err(|_| ())?;
 
-        self.cs.set_high();
+        self.cs.set_high()?;
 
         Ok(())
     }

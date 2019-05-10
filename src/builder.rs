@@ -78,7 +78,7 @@ impl Builder {
 
 impl<CS> Builder<CS>
 where
-    CS: OutputPin,
+    CS: OutputPin<Error = ()>,
 {
     /// Set the size of the display. Supported sizes are defined by [DisplaySize].
     pub fn with_size(self, display_size: DisplaySize) -> Self {
@@ -135,7 +135,7 @@ where
     ) -> DisplayMode<RawMode<SpiInterface<SPI, DC, CS>>>
     where
         SPI: hal::blocking::spi::Transfer<u8> + hal::blocking::spi::Write<u8>,
-        DC: OutputPin,
+        DC: OutputPin<Error = ()>,
     {
         let properties = DisplayProperties::new(
             SpiInterface::new(spi, dc, self.spi_cs),
