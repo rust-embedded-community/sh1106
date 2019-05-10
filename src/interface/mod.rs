@@ -20,8 +20,35 @@
 //! type OledDisplay =
 //!   GraphicsMode<I2cInterface<I2c<I2C1, (PB8<Alternate<OpenDrain>>, PB9<Alternate<OpenDrain>>)>>>;
 //! ```
+//!
+//! Here's one for SPI1 on an STM32F103xx:
+//!
+//! ```rust
+//! # extern crate sh1106;
+//! # extern crate stm32f103xx_hal as hal;
+//! # use hal::gpio::gpioa::{PA5, PA6, PA7};
+//! # use hal::gpio::gpiob::PB1;
+//! # use hal::gpio::{Alternate, Floating, Input, Output, PushPull};
+//! # use hal::spi::Spi;
+//! # use hal::stm32f103xx::SPI1;
+//! # use sh1106::interface::SpiInterface;
+//! pub type OledDisplay = GraphicsMode<
+//!     SpiInterface<
+//!         Spi<
+//!             SPI1,
+//!             (
+//!                 PA5<Alternate<PushPull>>,
+//!                 PA6<Input<Floating>>,
+//!                 PA7<Alternate<PushPull>>,
+//!             ),
+//!         >,
+//!         PB1<Output<PushPull>>,
+//!     >,
+//! >;
+//! ```
 
 pub mod i2c;
+pub mod spi;
 
 /// A method of communicating with sh1106
 pub trait DisplayInterface {
@@ -32,3 +59,4 @@ pub trait DisplayInterface {
 }
 
 pub use self::i2c::I2cInterface;
+pub use self::spi::SpiInterface;
