@@ -10,6 +10,10 @@ pub struct DisplayProperties<DI> {
     iface: DI,
     display_size: DisplaySize,
     display_rotation: DisplayRotation,
+    draw_area_start: (u8, u8),
+    draw_area_end: (u8, u8),
+    draw_column: u8,
+    draw_row: u8,
 }
 
 impl<DI> DisplayProperties<DI>
@@ -26,6 +30,10 @@ where
             iface,
             display_size,
             display_rotation,
+            draw_area_start: (0, 0),
+            draw_area_end: (0, 0),
+            draw_column: 0,
+            draw_row: 0,
         }
     }
 
@@ -50,6 +58,7 @@ where
         match self.display_size {
             DisplaySize::Display128x32 => Command::ComPinConfig(false).send(&mut self.iface),
             DisplaySize::Display128x64 => Command::ComPinConfig(true).send(&mut self.iface),
+            DisplaySize::Display132x64 => Command::ComPinConfig(true).send(&mut self.iface),
         }?;
 
         Command::Contrast(0x80).send(&mut self.iface)?;
@@ -66,16 +75,46 @@ where
     /// drawn. This method can be used for changing the affected area on the screen as well
     /// as (re-)setting the start point of the next `draw` call.
     pub fn set_draw_area(&mut self, start: (u8, u8), end: (u8, u8)) -> Result<(), ()> {
-        Command::ColumnAddress(start.0, end.0 - 1).send(&mut self.iface)?;
-        Command::PageAddress(start.1.into(), (end.1 - 1).into()).send(&mut self.iface)?;
+        self.draw_area_start = start;
+        self.draw_area_end = end;
+        self.draw_column = start.0;
+        self.draw_row = start.1;
+
+        self.send_draw_address()?;
+
         Ok(())
     }
 
     /// Send the data to the display for drawing at the current position in the framebuffer
     /// and advance the position accordingly. Cf. `set_draw_area` to modify the affected area by
     /// this method.
-    pub fn draw(&mut self, buffer: &[u8]) -> Result<(), ()> {
-        self.iface.send_data(&buffer)?;
+    pub fn draw(&mut self, mut buffer: &[u8]) -> Result<(), ()> {
+        while buffer.len() > 0 {
+            let count = self.draw_area_end.0 - self.draw_column;
+            self.iface.send_data(&buffer[..count as usize])?;
+            self.draw_column += count;
+
+            if self.draw_column >= self.draw_area_end.0 {
+                self.draw_column = self.draw_area_start.0;
+
+                self.draw_row += 8;
+                if self.draw_row >= self.draw_area_end.1 {
+                    self.draw_row = self.draw_area_start.1;
+                }
+
+                self.send_draw_address()?;
+            }
+
+            buffer = &buffer[count as usize..];
+        }
+
+        Ok(())
+    }
+
+    fn send_draw_address(&mut self) -> Result<(), ()> {
+        Command::PageAddress(self.draw_row.into()).send(&mut self.iface)?;
+        Command::ColumnAddressLow(0xF & self.draw_column).send(&mut self.iface)?;
+        Command::ColumnAddressHigh(0xF & (self.draw_column >> 4)).send(&mut self.iface)?;
 
         Ok(())
     }

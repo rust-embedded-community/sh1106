@@ -24,6 +24,8 @@ use crate::interface::DisplayInterface;
 use crate::mode::displaymode::DisplayModeTrait;
 use crate::properties::DisplayProperties;
 
+const BUFFER_SIZE: usize = 132 * 64 / 8;
+
 // TODO: Add to prelude
 /// Graphics mode handler
 pub struct GraphicsMode<DI>
@@ -31,7 +33,7 @@ where
     DI: DisplayInterface,
 {
     properties: DisplayProperties<DI>,
-    buffer: [u8; 1024],
+    buffer: [u8; BUFFER_SIZE],
 }
 
 impl<DI> DisplayModeTrait<DI> for GraphicsMode<DI>
@@ -42,7 +44,7 @@ where
     fn new(properties: DisplayProperties<DI>) -> Self {
         GraphicsMode {
             properties,
-            buffer: [0; 1024],
+            buffer: [0; BUFFER_SIZE],
         }
     }
 
@@ -58,7 +60,7 @@ where
 {
     /// Clear the display buffer. You need to call `disp.flush()` for any effect on the screen
     pub fn clear(&mut self) {
-        self.buffer = [0; 1024];
+        self.buffer = [0; BUFFER_SIZE];
     }
 
     /// Reset display
@@ -82,13 +84,15 @@ where
         // Ensure the display buffer is at the origin of the display before we send the full frame
         // to prevent accidental offsets
         let (display_width, display_height) = display_size.dimensions();
-        self.properties
-            .set_draw_area((0, 0), (display_width, display_height))?;
+        let column_offset = display_size.column_offset();
+        self.properties.set_draw_area(
+            (column_offset, 0),
+            (display_width + column_offset, display_height),
+        )?;
 
-        match display_size {
-            DisplaySize::Display128x64 => self.properties.draw(&self.buffer),
-            DisplaySize::Display128x32 => self.properties.draw(&self.buffer[0..512]),
-        }
+        let length = (display_width as usize) * (display_height as usize) / 8;
+
+        self.properties.draw(&self.buffer[..length])
     }
 
     /// Turn a pixel on or off. A non-zero `value` is treated as on, `0` as off. If the X and Y
