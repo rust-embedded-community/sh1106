@@ -16,19 +16,19 @@ branch = "master"
 repository = "jamwaffles/sh1106"
 
 [dependencies]
-embedded-hal = "0.2.2"
+embedded-hal = "0.2.3"
 
 [dependencies.embedded-graphics]
 optional = true
-version = "0.4.4"
+version = "0.4.8"
 
 [dev-dependencies]
-cortex-m = "0.5.8"
-cortex-m-rt = "0.6.6"
-panic-semihosting = "0.5.1"
+cortex-m = "0.6.0"
+cortex-m-rt = "0.6.8"
+panic-semihosting = "0.5.2"
 
 [dev-dependencies.stm32f1xx-hal]
-version = "0.2.0"
+version = "0.3.0"
 features = [ "rt", "stm32f103" ]
 
 [features]
