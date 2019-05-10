@@ -52,7 +52,7 @@ use crate::properties::DisplayProperties;
 
 /// Builder struct. Driver options and interface are set using its methods.
 #[derive(Clone, Copy)]
-pub struct Builder<CS=NoOutputPin> {
+pub struct Builder<CS = NoOutputPin> {
     display_size: DisplaySize,
     rotation: DisplayRotation,
     i2c_addr: u8,
@@ -78,11 +78,15 @@ impl Builder {
 }
 
 impl<CS> Builder<CS>
-    where CS: OutputPin
+where
+    CS: OutputPin,
 {
     /// Set the size of the display. Supported sizes are defined by [DisplaySize].
     pub fn with_size(self, display_size: DisplaySize) -> Self {
-        Self { display_size, ..self }
+        Self {
+            display_size,
+            ..self
+        }
     }
 
     /// Set the I2C address to use. Defaults to 0x3C which is the most common address.
@@ -100,7 +104,8 @@ impl<CS> Builder<CS>
     /// function, but can be used if the bus is shared with other devices. If not used, the CS pin
     /// on the controller should be connected to ground. Ignored when using I2C interface.
     pub fn with_spi_cs<NEWCS>(self, spi_cs: NEWCS) -> Builder<NEWCS>
-        where NEWCS: OutputPin
+    where
+        NEWCS: OutputPin,
     {
         Builder {
             display_size: self.display_size,
@@ -136,7 +141,7 @@ impl<CS> Builder<CS>
         let properties = DisplayProperties::new(
             SpiInterface::new(spi, dc, self.spi_cs),
             self.display_size,
-            self.rotation
+            self.rotation,
         );
         DisplayMode::<RawMode<SpiInterface<SPI, DC, CS>>>::new(properties)
     }
@@ -147,6 +152,6 @@ impl<CS> Builder<CS>
 pub struct NoOutputPin;
 
 impl OutputPin for NoOutputPin {
-    fn set_low(&mut self) { }
-    fn set_high(&mut self) { }
+    fn set_low(&mut self) {}
+    fn set_high(&mut self) {}
 }

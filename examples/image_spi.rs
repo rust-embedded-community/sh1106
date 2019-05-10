@@ -32,11 +32,11 @@ extern crate stm32f1xx_hal as hal;
 
 use cortex_m_rt::ExceptionFrame;
 use cortex_m_rt::{entry, exception};
-use embedded_hal::spi;
 use embedded_graphics::image::Image1BPP;
 use embedded_graphics::prelude::*;
-use hal::spi::Spi;
+use embedded_hal::spi;
 use hal::prelude::*;
+use hal::spi::Spi;
 use hal::stm32;
 use sh1106::prelude::*;
 use sh1106::Builder;
@@ -67,12 +67,10 @@ fn main() -> ! {
         spi::MODE_0,
         400.khz(),
         clocks,
-        &mut rcc.apb2);
+        &mut rcc.apb2,
+    );
 
-    let mut disp: GraphicsMode<_> = Builder::new()
-        .with_spi_cs(cs)
-        .connect_spi(spi, dc)
-        .into();
+    let mut disp: GraphicsMode<_> = Builder::new().with_spi_cs(cs).connect_spi(spi, dc).into();
 
     disp.init().unwrap();
     disp.flush().unwrap();
