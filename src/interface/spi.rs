@@ -1,9 +1,8 @@
 //! sh1106 SPI interface
 
-use hal;
-use hal::digital::OutputPin;
-
 use super::DisplayInterface;
+use hal;
+use hal::digital::v2::OutputPin;
 
 /// SPI display interface.
 ///

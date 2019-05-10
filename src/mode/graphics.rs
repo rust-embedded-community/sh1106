@@ -15,14 +15,13 @@
 //! display.flush().unwrap();
 //! ```
 
-use hal::blocking::delay::DelayMs;
-use hal::digital::OutputPin;
-
 use crate::displayrotation::DisplayRotation;
 use crate::displaysize::DisplaySize;
 use crate::interface::DisplayInterface;
 use crate::mode::displaymode::DisplayModeTrait;
 use crate::properties::DisplayProperties;
+use hal::blocking::delay::DelayMs;
+use hal::digital::v2::OutputPin;
 
 // TODO: Add to prelude
 /// Graphics mode handler

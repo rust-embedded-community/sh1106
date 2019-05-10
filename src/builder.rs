@@ -40,15 +40,14 @@
 //! let display: GraphicsMode<_> = Builder::new().connect_spi(spi, dc).into();
 //! ```
 
-use hal;
-use hal::digital::OutputPin;
-
 use crate::displayrotation::DisplayRotation;
 use crate::displaysize::DisplaySize;
 use crate::interface::{I2cInterface, SpiInterface};
 use crate::mode::displaymode::DisplayMode;
 use crate::mode::raw::RawMode;
 use crate::properties::DisplayProperties;
+use hal;
+use hal::digital::v2::OutputPin;
 
 /// Builder struct. Driver options and interface are set using its methods.
 #[derive(Clone, Copy)]
@@ -152,6 +151,13 @@ where
 pub struct NoOutputPin;
 
 impl OutputPin for NoOutputPin {
-    fn set_low(&mut self) {}
-    fn set_high(&mut self) {}
+    type Error = ();
+
+    fn set_low(&mut self) -> Result<(), ()> {
+        Ok(())
+    }
+
+    fn set_high(&mut self) -> Result<(), ()> {
+        Ok(())
+    }
 }
