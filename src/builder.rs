@@ -46,39 +46,42 @@ use crate::interface::{I2cInterface, SpiInterface};
 use crate::mode::displaymode::DisplayMode;
 use crate::mode::raw::RawMode;
 use crate::properties::DisplayProperties;
+use core::marker::PhantomData;
 use hal;
 use hal::digital::v2::OutputPin;
 
 /// Builder struct. Driver options and interface are set using its methods.
 #[derive(Clone, Copy)]
-pub struct Builder<CS = NoOutputPin> {
+pub struct Builder<CS = NoOutputPin, PinError = ()> {
     display_size: DisplaySize,
     rotation: DisplayRotation,
     i2c_addr: u8,
     spi_cs: CS,
+    _pin_error: PhantomData<PinError>,
 }
 
-impl Default for Builder {
+impl<PinError> Default for Builder<PinError> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl Builder {
+impl<PinError> Builder<PinError> {
     /// Create new builder with a default size of 128 x 64 pixels and no rotation.
-    pub fn new() -> Builder<NoOutputPin> {
+    pub fn new() -> Builder<NoOutputPin, PinError> {
         Builder {
             display_size: DisplaySize::Display128x64,
             rotation: DisplayRotation::Rotate0,
             i2c_addr: 0x3c,
             spi_cs: NoOutputPin,
+            _pin_error: PhantomData,
         }
     }
 }
 
-impl<CS> Builder<CS>
+impl<CS, PinError> Builder<CS>
 where
-    CS: OutputPin<Error = ()>,
+    CS: OutputPin<Error = PinError>,
 {
     /// Set the size of the display. Supported sizes are defined by [DisplaySize].
     pub fn with_size(self, display_size: DisplaySize) -> Self {
@@ -135,7 +138,7 @@ where
     ) -> DisplayMode<RawMode<SpiInterface<SPI, DC, CS>>>
     where
         SPI: hal::blocking::spi::Transfer<u8> + hal::blocking::spi::Write<u8>,
-        DC: OutputPin<Error = ()>,
+        DC: OutputPin<Error = PinError>,
     {
         let properties = DisplayProperties::new(
             SpiInterface::new(spi, dc, self.spi_cs),

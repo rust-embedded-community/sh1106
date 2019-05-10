@@ -15,11 +15,11 @@ pub trait DisplayModeTrait<DI> {
     fn release(self) -> DisplayProperties<DI>;
 }
 
-impl<MODE> DisplayMode<MODE> {
+impl<MODE, PinError> DisplayMode<MODE> {
     /// Setup display to run in requested mode
     pub fn new<DI>(properties: DisplayProperties<DI>) -> Self
     where
-        DI: DisplayInterface,
+        DI: DisplayInterface<PinError>,
         MODE: DisplayModeTrait<DI>,
     {
         DisplayMode(MODE::new(properties))
@@ -29,7 +29,7 @@ impl<MODE> DisplayMode<MODE> {
     // TODO: Figure out how to stay as generic DisplayMode but act as particular mode
     pub fn into<DI, NMODE: DisplayModeTrait<DI>>(self) -> NMODE
     where
-        DI: DisplayInterface,
+        DI: DisplayInterface<PinError>,
         MODE: DisplayModeTrait<DI>,
     {
         let properties = self.0.release();

@@ -9,16 +9,16 @@ use crate::mode::displaymode::DisplayModeTrait;
 use crate::properties::DisplayProperties;
 
 /// Raw display mode
-pub struct RawMode<DI>
+pub struct RawMode<DI, PinError = ()>
 where
-    DI: DisplayInterface,
+    DI: DisplayInterface<PinError>,
 {
     properties: DisplayProperties<DI>,
 }
 
-impl<DI> DisplayModeTrait<DI> for RawMode<DI>
+impl<DI, PinError> DisplayModeTrait<DI> for RawMode<DI>
 where
-    DI: DisplayInterface,
+    DI: DisplayInterface<PinError>,
 {
     /// Create new RawMode instance
     fn new(properties: DisplayProperties<DI>) -> Self {
@@ -31,7 +31,7 @@ where
     }
 }
 
-impl<DI: DisplayInterface> RawMode<DI> {
+impl<DI: DisplayInterface<PinError>, PinError> RawMode<DI> {
     /// Create a new raw display mode
     pub fn new(properties: DisplayProperties<DI>) -> Self {
         RawMode { properties }

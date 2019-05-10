@@ -6,15 +6,15 @@ use crate::displaysize::DisplaySize;
 use crate::interface::DisplayInterface;
 
 /// Display properties struct
-pub struct DisplayProperties<DI> {
+pub struct DisplayProperties<DI, PinError = ()> {
     iface: DI,
     display_size: DisplaySize,
     display_rotation: DisplayRotation,
 }
 
-impl<DI> DisplayProperties<DI>
+impl<DI, PinError> DisplayProperties<DI>
 where
-    DI: DisplayInterface,
+    DI: DisplayInterface<PinError>,
 {
     /// Create new DisplayProperties instance
     pub fn new(

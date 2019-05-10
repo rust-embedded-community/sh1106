@@ -25,17 +25,17 @@ use hal::digital::v2::OutputPin;
 
 // TODO: Add to prelude
 /// Graphics mode handler
-pub struct GraphicsMode<DI>
+pub struct GraphicsMode<DI, PinError = ()>
 where
-    DI: DisplayInterface,
+    DI: DisplayInterface<PinError>,
 {
     properties: DisplayProperties<DI>,
     buffer: [u8; 1024],
 }
 
-impl<DI> DisplayModeTrait<DI> for GraphicsMode<DI>
+impl<DI, PinError> DisplayModeTrait<DI> for GraphicsMode<DI>
 where
-    DI: DisplayInterface,
+    DI: DisplayInterface<PinError>,
 {
     /// Create new GraphicsMode instance
     fn new(properties: DisplayProperties<DI>) -> Self {
@@ -51,9 +51,9 @@ where
     }
 }
 
-impl<DI> GraphicsMode<DI>
+impl<DI, PinError> GraphicsMode<DI>
 where
-    DI: DisplayInterface,
+    DI: DisplayInterface<PinError>,
 {
     /// Clear the display buffer. You need to call `disp.flush()` for any effect on the screen
     pub fn clear(&mut self) {
@@ -166,9 +166,9 @@ extern crate embedded_graphics;
 use self::embedded_graphics::{drawable, pixelcolor::PixelColorU8, Drawing};
 
 #[cfg(feature = "graphics")]
-impl<DI> Drawing<PixelColorU8> for GraphicsMode<DI>
+impl<DI, PinError> Drawing<PixelColorU8> for GraphicsMode<DI>
 where
-    DI: DisplayInterface,
+    DI: DisplayInterface<PinError>,
 {
     fn draw<T>(&mut self, item_pixels: T)
     where

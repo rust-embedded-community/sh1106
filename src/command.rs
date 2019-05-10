@@ -52,11 +52,11 @@ pub enum Command {
     ChargePump(bool),
 }
 
-impl Command {
+impl<PinError> Command {
     /// Send command to sh1106
-    pub fn send<DI>(self, iface: &mut DI) -> Result<(), ()>
+    pub fn send<DI>(self, iface: &mut DI) -> Result<(), PinError>
     where
-        DI: DisplayInterface,
+        DI: DisplayInterface<PinError>,
     {
         // Transform command into a fixed size array of 7 u8 and the real length for sending
         let (data, len) = match self {
