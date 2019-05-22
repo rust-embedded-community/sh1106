@@ -15,15 +15,12 @@ pub enum Command {
     Invert(bool),
     /// Turn display on or off.
     DisplayOn(bool),
-    /// Setup column start and end address
-    /// values range from 0-127
-    /// This is only for horizontal or vertical addressing mode
-    ColumnAddress(u8, u8),
-    /// Setup page start and end address
-    /// This is only for horizontal or vertical addressing mode
-    PageAddress(Page, Page),
-    /// Set GDDRAM page start address for Page addressing mode
-    PageStart(Page),
+    /// Set column address lower 4 bits
+    ColumnAddressLow(u8),
+    /// Set column address higher 4 bits
+    ColumnAddressHigh(u8),
+    /// Set page address
+    PageAddress(Page),
     /// Set display start line from 0-63
     StartLine(u8),
     /// Reverse columns from 127-0
@@ -64,9 +61,9 @@ impl Command {
             Command::AllOn(on) => ([0xA4 | (on as u8), 0, 0, 0, 0, 0, 0], 1),
             Command::Invert(inv) => ([0xA6 | (inv as u8), 0, 0, 0, 0, 0, 0], 1),
             Command::DisplayOn(on) => ([0xAE | (on as u8), 0, 0, 0, 0, 0, 0], 1),
-            Command::ColumnAddress(start, end) => ([0x21, start, end, 0, 0, 0, 0], 3),
-            Command::PageAddress(start, end) => ([0x22, start as u8, end as u8, 0, 0, 0, 0], 3),
-            Command::PageStart(page) => ([0xB0 | (page as u8), 0, 0, 0, 0, 0, 0], 1),
+            Command::ColumnAddressLow(addr) => ([0xF & addr, 0, 0, 0, 0, 0, 0], 1),
+            Command::ColumnAddressHigh(addr) => ([0x10 | (0xF & addr), 0, 0, 0, 0, 0, 0], 1),
+            Command::PageAddress(page) => ([0xB0 | (page as u8), 0, 0, 0, 0, 0, 0], 1),
             Command::StartLine(line) => ([0x40 | (0x3F & line), 0, 0, 0, 0, 0, 0], 1),
             Command::SegmentRemap(remap) => ([0xA0 | (remap as u8), 0, 0, 0, 0, 0, 0], 1),
             Command::Multiplex(ratio) => ([0xA8, ratio, 0, 0, 0, 0, 0], 2),
@@ -96,21 +93,21 @@ impl Command {
 #[derive(Debug, Clone, Copy)]
 pub enum Page {
     /// Page 0
-    Page0 = 0xb0,
+    Page0 = 0,
     /// Page 1
-    Page1 = 0xb1,
+    Page1 = 1,
     /// Page 2
-    Page2 = 0xb2,
+    Page2 = 2,
     /// Page 3
-    Page3 = 0xb3,
+    Page3 = 3,
     /// Page 4
-    Page4 = 0xb4,
+    Page4 = 4,
     /// Page 5
-    Page5 = 0xb5,
+    Page5 = 5,
     /// Page 6
-    Page6 = 0xb6,
+    Page6 = 6,
     /// Page 7
-    Page7 = 0xb7,
+    Page7 = 7,
 }
 
 impl From<u8> for Page {
