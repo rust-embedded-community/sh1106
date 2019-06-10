@@ -41,7 +41,7 @@
 //! ```
 
 use hal;
-use hal::digital::OutputPin;
+use hal::digital::v2::OutputPin;
 
 use crate::displayrotation::DisplayRotation;
 use crate::displaysize::DisplaySize;
@@ -77,9 +77,9 @@ impl Builder {
     }
 }
 
-impl<CS> Builder<CS>
+impl<CS, PinE> Builder<CS>
 where
-    CS: OutputPin,
+    CS: OutputPin<Error = PinE>,
 {
     /// Set the size of the display. Supported sizes are defined by [DisplaySize].
     pub fn with_size(self, display_size: DisplaySize) -> Self {
@@ -137,7 +137,8 @@ where
     where
         SPI: hal::blocking::spi::Transfer<u8, Error = CommE>
             + hal::blocking::spi::Write<u8, Error = CommE>,
-        DC: OutputPin,
+        DC: OutputPin<Error = PinE>,
+        CS: OutputPin<Error = PinE>,
     {
         let properties = DisplayProperties::new(
             SpiInterface::new(spi, dc, self.spi_cs),
@@ -153,6 +154,11 @@ where
 pub struct NoOutputPin;
 
 impl OutputPin for NoOutputPin {
-    fn set_low(&mut self) {}
-    fn set_high(&mut self) {}
+    type Error = ();
+    fn set_low(&mut self) -> Result<(), ()> {
+        Ok(())
+    }
+    fn set_high(&mut self) -> Result<(), ()> {
+        Ok(())
+    }
 }
