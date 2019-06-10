@@ -13,7 +13,6 @@ pub enum DisplaySize {
 
 impl DisplaySize {
     /// Get integral dimensions from DisplaySize
-    // TODO: Use whatever vec2 impl I decide to use here
     pub fn dimensions(&self) -> (u8, u8) {
         match *self {
             DisplaySize::Display128x64 => (128, 64),

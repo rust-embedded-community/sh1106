@@ -19,7 +19,6 @@ use hal::blocking::delay::DelayMs;
 use hal::digital::v2::OutputPin;
 
 use crate::displayrotation::DisplayRotation;
-use crate::displaysize::DisplaySize;
 use crate::interface::DisplayInterface;
 use crate::mode::displaymode::DisplayModeTrait;
 use crate::properties::DisplayProperties;
@@ -27,7 +26,6 @@ use crate::Error;
 
 const BUFFER_SIZE: usize = 132 * 64 / 8;
 
-// TODO: Add to prelude
 /// Graphics mode handler
 pub struct GraphicsMode<DI>
 where
@@ -65,7 +63,6 @@ where
     }
 
     /// Reset display
-    // TODO: Move to a more appropriate place
     pub fn reset<RST, DELAY, PinE>(
         &mut self,
         rst: &mut RST,
@@ -185,9 +182,4 @@ where
             self.set_pixel((pixel.0).0, (pixel.0).1, pixel.1.into_inner());
         }
     }
-}
-
-#[cfg(test)]
-mod tests {
-    // TODO lol
 }

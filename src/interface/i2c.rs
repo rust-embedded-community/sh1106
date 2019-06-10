@@ -1,4 +1,4 @@
-//! sh1106 I2C Interface
+//! SH1106 I2C Interface
 
 use hal;
 
@@ -6,8 +6,7 @@ use super::DisplayInterface;
 use crate::command::Page;
 use crate::Error;
 
-// TODO: Add to prelude
-/// sh1106 I2C communication interface
+/// SH1106 I2C communication interface
 pub struct I2cInterface<I2C> {
     i2c: I2C,
     addr: u8,

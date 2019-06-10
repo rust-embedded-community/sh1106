@@ -121,8 +121,6 @@ where
         self.display_size
     }
 
-    // TODO: Replace (u8, u8) with a dimensioney type for consistency
-    // TOOD: Make doc tests work
     /// Get display dimensions, taking into account the current rotation of the display
     ///
     /// ```rust
