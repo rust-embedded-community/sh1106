@@ -4,6 +4,7 @@ use hal;
 use hal::digital::OutputPin;
 
 use super::DisplayInterface;
+use crate::Error;
 
 /// SPI display interface.
 ///
@@ -14,9 +15,9 @@ pub struct SpiInterface<SPI, DC, CS> {
     cs: CS,
 }
 
-impl<SPI, DC, CS> SpiInterface<SPI, DC, CS>
+impl<SPI, DC, CS, CommE> SpiInterface<SPI, DC, CS>
 where
-    SPI: hal::blocking::spi::Write<u8>,
+    SPI: hal::blocking::spi::Write<u8, Error = CommE>,
     DC: OutputPin,
     CS: OutputPin,
 {
@@ -28,17 +29,19 @@ where
     }
 }
 
-impl<SPI, DC, CS> DisplayInterface for SpiInterface<SPI, DC, CS>
+impl<SPI, DC, CS, CommE> DisplayInterface for SpiInterface<SPI, DC, CS>
 where
-    SPI: hal::blocking::spi::Write<u8>,
+    SPI: hal::blocking::spi::Write<u8, Error = CommE>,
     DC: OutputPin,
     CS: OutputPin,
 {
-    fn send_commands(&mut self, cmds: &[u8]) -> Result<(), ()> {
+    type Error = Error<CommE>;
+
+    fn send_commands(&mut self, cmds: &[u8]) -> Result<(), Self::Error> {
         self.cs.set_low();
         self.dc.set_low();
 
-        self.spi.write(&cmds).map_err(|_| ())?;
+        self.spi.write(&cmds).map_err(Error::Comm)?;
 
         self.dc.set_high();
         self.cs.set_high();
@@ -46,13 +49,13 @@ where
         Ok(())
     }
 
-    fn send_data(&mut self, buf: &[u8]) -> Result<(), ()> {
+    fn send_data(&mut self, buf: &[u8]) -> Result<(), Self::Error> {
         self.cs.set_low();
 
         // 1 = data, 0 = command
         self.dc.set_high();
 
-        self.spi.write(&buf).map_err(|_| ())?;
+        self.spi.write(&buf).map_err(Error::Comm)?;
 
         self.cs.set_high();
 

@@ -96,6 +96,13 @@
 #![deny(unused_import_braces)]
 #![deny(unused_qualifications)]
 
+/// Errors in this crate
+#[derive(Debug)]
+pub enum Error<CommE> {
+    /// Communication error
+    Comm(CommE),
+}
+
 extern crate embedded_hal as hal;
 
 pub mod builder;
