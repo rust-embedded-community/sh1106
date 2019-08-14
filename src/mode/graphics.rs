@@ -167,19 +167,26 @@ where
 #[cfg(feature = "graphics")]
 extern crate embedded_graphics;
 #[cfg(feature = "graphics")]
-use self::embedded_graphics::{drawable, pixelcolor::PixelColorU8, Drawing};
+use self::embedded_graphics::{drawable, pixelcolor::BinaryColor, Drawing};
 
 #[cfg(feature = "graphics")]
-impl<DI> Drawing<PixelColorU8> for GraphicsMode<DI>
+impl<DI> Drawing<BinaryColor> for GraphicsMode<DI>
 where
     DI: DisplayInterface,
 {
     fn draw<T>(&mut self, item_pixels: T)
     where
-        T: Iterator<Item = drawable::Pixel<PixelColorU8>>,
+        T: IntoIterator<Item = drawable::Pixel<BinaryColor>>,
     {
         for pixel in item_pixels {
-            self.set_pixel((pixel.0).0, (pixel.0).1, pixel.1.into_inner());
+            self.set_pixel(
+                (pixel.0).0,
+                (pixel.0).1,
+                match pixel.1 {
+                    BinaryColor::On => 1,
+                    BinaryColor::Off => 0,
+                },
+            );
         }
     }
 }
