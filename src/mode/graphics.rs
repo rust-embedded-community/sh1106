@@ -167,7 +167,14 @@ where
 #[cfg(feature = "graphics")]
 extern crate embedded_graphics;
 #[cfg(feature = "graphics")]
-use self::embedded_graphics::{drawable, pixelcolor::BinaryColor, Drawing};
+use self::embedded_graphics::{
+    drawable,
+    pixelcolor::{
+        raw::{RawData, RawU1},
+        BinaryColor,
+    },
+    Drawing,
+};
 
 #[cfg(feature = "graphics")]
 impl<DI> Drawing<BinaryColor> for GraphicsMode<DI>
@@ -178,14 +185,18 @@ where
     where
         T: IntoIterator<Item = drawable::Pixel<BinaryColor>>,
     {
-        for pixel in item_pixels {
+        // Filter out pixels that are off the top left of the screen
+        let on_screen_pixels = item_pixels
+            .into_iter()
+            .filter(|drawable::Pixel(point, _)| point.x >= 0 && point.y >= 0);
+
+        for drawable::Pixel(point, color) in on_screen_pixels {
+            // NOTE: The filter above means the coordinate conversions from `i32` to `u32` should
+            // never error.
             self.set_pixel(
-                (pixel.0).0,
-                (pixel.0).1,
-                match pixel.1 {
-                    BinaryColor::On => 1,
-                    BinaryColor::Off => 0,
-                },
+                point.x as u32,
+                point.y as u32,
+                RawU1::from(color).into_inner(),
             );
         }
     }
