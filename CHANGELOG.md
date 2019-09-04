@@ -6,7 +6,7 @@ with the [embedded-hal](crates.io/crates/embedded-hal) traits for maximum portab
 
 ## 0.3.0-alpha.1
 
-Upgrade to new embedded-graphics alpha release.
+Upgrade to new embedded-graphics `0.6.0-alpha.2` release. Please see the [embedded-graphics changelog](https://github.com/jamwaffles/embedded-graphics/blob/c0ed1700635f307a4c5114fec1769147878fd584/CHANGELOG.md) for more information.
 
 ### Added
 
@@ -14,7 +14,7 @@ Upgrade to new embedded-graphics alpha release.
 
 ### Changed
 
-- **(breaking)** #9 Upgraded to [embedded-graphics](https://crates.io/crates/embedded-graphics) 0.6.0-alpha.1
+- **(breaking)** #9 Upgraded to [embedded-graphics](https://crates.io/crates/embedded-graphics) 0.6.0-alpha.2
 
 ### Deprecated
 
