@@ -24,6 +24,7 @@ extern crate stm32f1xx_hal as hal;
 
 use cortex_m_rt::ExceptionFrame;
 use cortex_m_rt::{entry, exception};
+use embedded_graphics::pixelcolor::BinaryColor;
 use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::{Circle, Line, Rectangle};
 use hal::i2c::{BlockingI2c, DutyCycle, Mode};
@@ -71,29 +72,29 @@ fn main() -> ! {
 
     disp.draw(
         Line::new(Point::new(8, 16 + 16), Point::new(8 + 16, 16 + 16))
-            .stroke_width(1)
+            .stroke(Some(BinaryColor::On))
             .into_iter(),
     );
     disp.draw(
         Line::new(Point::new(8, 16 + 16), Point::new(8 + 8, 16))
-            .stroke_width(1)
+            .stroke(Some(BinaryColor::On))
             .into_iter(),
     );
     disp.draw(
         Line::new(Point::new(8 + 16, 16 + 16), Point::new(8 + 8, 16))
-            .stroke_width(1)
+            .stroke(Some(BinaryColor::On))
             .into_iter(),
     );
 
     disp.draw(
         Rectangle::new(Point::new(48, 16), Point::new(48 + 16, 16 + 16))
-            .stroke_width(1)
+            .stroke(Some(BinaryColor::On))
             .into_iter(),
     );
 
     disp.draw(
         Circle::new(Point::new(96, 16 + 8), 8)
-            .stroke_width(1)
+            .stroke(Some(BinaryColor::On))
             .into_iter(),
     );
 
