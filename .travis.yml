@@ -38,6 +38,8 @@ matrix:
     - rust: nightly
 
 before_install:
+  - rustup self update
+  - rustup update
   - rustup component add rustfmt
   - pip install linkchecker --user
 
