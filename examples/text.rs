@@ -65,7 +65,7 @@ fn main() -> ! {
         1000,
     );
 
-    let mut disp: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
+    let mut disp: GraphicsMode<_> = Builder::<()>::new().connect_i2c(i2c).into();
 
     disp.init().unwrap();
     disp.flush().unwrap();

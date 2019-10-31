@@ -69,7 +69,7 @@ fn main() -> ! {
         1000,
     );
 
-    let mut disp: GraphicsMode<_> = Builder::new()
+    let mut disp: GraphicsMode<_> = Builder::<()>::new()
         // Set initial rotation at 90 degrees clockwise
         .with_rotation(DisplayRotation::Rotate90)
         .connect_i2c(i2c)
