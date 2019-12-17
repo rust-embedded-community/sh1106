@@ -141,6 +141,13 @@ pub struct NoOutputPin<PinE = ()> {
     _m: PhantomData<PinE>,
 }
 
+impl<PinE> NoOutputPin<PinE> {
+    /// Create a new instance of `NoOutputPin`
+    pub fn new() -> Self {
+        Self { _m: PhantomData }
+    }
+}
+
 impl<PinE> OutputPin for NoOutputPin<PinE> {
     type Error = PinE;
     fn set_low(&mut self) -> Result<(), PinE> {
