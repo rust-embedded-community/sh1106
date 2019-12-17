@@ -69,7 +69,7 @@ fn main() -> ! {
         &mut rcc.apb2,
     );
 
-    let mut disp: GraphicsMode<_> = Builder::new().with_spi_cs(cs).connect_spi(spi, dc).into();
+    let mut disp: GraphicsMode<_> = Builder::new().connect_spi(spi, dc, cs).into();
 
     disp.init().unwrap();
     disp.flush().unwrap();

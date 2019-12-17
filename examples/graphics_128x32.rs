@@ -55,7 +55,7 @@ fn main() -> ! {
         1000,
     );
 
-    let mut disp: GraphicsMode<_> = Builder::<()>::new()
+    let mut disp: GraphicsMode<_> = Builder::new()
         .with_size(DisplaySize::Display128x32)
         .connect_i2c(i2c)
         .into();
