@@ -88,7 +88,7 @@ where
     /// and advance the position accordingly. Cf. `set_draw_area` to modify the affected area by
     /// this method.
     pub fn draw(&mut self, mut buffer: &[u8]) -> Result<(), DI::Error> {
-        while buffer.len() > 0 {
+        while !buffer.is_empty() {
             let count = self.draw_area_end.0 - self.draw_column;
             self.iface.send_data(&buffer[..count as usize])?;
             self.draw_column += count;
