@@ -157,3 +157,24 @@ impl<PinE> OutputPin for NoOutputPin<PinE> {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::NoOutputPin;
+    use embedded_hal::digital::v2::OutputPin;
+
+    enum SomeError {}
+
+    struct SomeDriver<P: OutputPin<Error = SomeError>> {
+        #[allow(dead_code)]
+        p: P,
+    }
+
+    #[test]
+    fn test_output_pin() {
+        let p = NoOutputPin::new();
+        let _d = SomeDriver { p };
+
+        assert!(true);
+    }
+}
