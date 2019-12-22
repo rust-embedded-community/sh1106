@@ -13,21 +13,7 @@ From [`examples/text.rs`](examples/text.rs):
 ```rust
 // ...snip, see examples/text.rs for runnable code ...
 
-let i2c = BlockingI2c::i2c1(
-    dp.I2C1,
-    (scl, sda),
-    &mut afio.mapr,
-    Mode::Fast {
-        frequency: 400_000,
-        duty_cycle: DutyCycle::Ratio2to1,
-    },
-    clocks,
-    &mut rcc.apb1,
-    1000,
-    10,
-    1000,
-    1000,
-);
+let i2c = /* ... */;
 
 let mut disp: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
 
@@ -36,13 +22,13 @@ disp.flush().unwrap();
 
 disp.draw(
     Font6x8::render_str("Hello world!")
-        .with_stroke(Some(1u8.into()))
+        .stroke_width(1)
         .into_iter(),
 );
 disp.draw(
     Font6x8::render_str("Hello Rust!")
-        .with_stroke(Some(1u8.into()))
-        .translate(Coord::new(0, 16))
+        .stroke_width(1)
+        .translate(Point::new(0, 16))
         .into_iter(),
 );
 
