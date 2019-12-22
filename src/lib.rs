@@ -116,4 +116,4 @@ pub mod mode;
 pub mod prelude;
 pub mod properties;
 
-pub use crate::builder::Builder;
+pub use crate::builder::{Builder, NoOutputPin};
