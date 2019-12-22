@@ -40,6 +40,7 @@
 //! let display: GraphicsMode<_> = Builder::new().connect_spi(spi, dc).into();
 //! ```
 
+use core::marker::PhantomData;
 use hal;
 use hal::digital::v2::OutputPin;
 
@@ -52,11 +53,10 @@ use crate::properties::DisplayProperties;
 
 /// Builder struct. Driver options and interface are set using its methods.
 #[derive(Clone, Copy)]
-pub struct Builder<CS = NoOutputPin> {
+pub struct Builder {
     display_size: DisplaySize,
     rotation: DisplayRotation,
     i2c_addr: u8,
-    spi_cs: CS,
 }
 
 impl Default for Builder {
@@ -67,20 +67,16 @@ impl Default for Builder {
 
 impl Builder {
     /// Create new builder with a default size of 128 x 64 pixels and no rotation.
-    pub fn new() -> Builder<NoOutputPin> {
+    pub fn new() -> Builder {
         Builder {
             display_size: DisplaySize::Display128x64,
             rotation: DisplayRotation::Rotate0,
             i2c_addr: 0x3c,
-            spi_cs: NoOutputPin,
         }
     }
 }
 
-impl<CS, PinE> Builder<CS>
-where
-    CS: OutputPin<Error = PinE>,
-{
+impl Builder {
     /// Set the size of the display. Supported sizes are defined by [DisplaySize].
     pub fn with_size(self, display_size: DisplaySize) -> Self {
         Self {
@@ -100,21 +96,6 @@ where
         Self { rotation, ..self }
     }
 
-    /// Set the SPI chip select (CS) pin to use. The CS pin is not required for the controller for
-    /// function, but can be used if the bus is shared with other devices. If not used, the CS pin
-    /// on the controller should be connected to ground. Ignored when using I2C interface.
-    pub fn with_spi_cs<NEWCS>(self, spi_cs: NEWCS) -> Builder<NEWCS>
-    where
-        NEWCS: OutputPin,
-    {
-        Builder {
-            display_size: self.display_size,
-            i2c_addr: self.i2c_addr,
-            rotation: self.rotation,
-            spi_cs,
-        }
-    }
-
     /// Finish the builder and use I2C to communicate with the display
     pub fn connect_i2c<I2C, CommE>(self, i2c: I2C) -> DisplayMode<RawMode<I2cInterface<I2C>>>
     where
@@ -129,10 +110,15 @@ where
     }
 
     /// Finish the builder and use SPI to communicate with the display
-    pub fn connect_spi<SPI, DC, CommE>(
+    ///
+    /// If the Chip Select (CS) pin is not required, [`NoOutputPin`] can be used as a dummy argument
+    ///
+    /// [`NoOutputPin`]: ./struct.NoOutputPin.html
+    pub fn connect_spi<SPI, DC, CS, CommE, PinE>(
         self,
         spi: SPI,
         dc: DC,
+        cs: CS,
     ) -> DisplayMode<RawMode<SpiInterface<SPI, DC, CS>>>
     where
         SPI: hal::blocking::spi::Transfer<u8, Error = CommE>
@@ -141,7 +127,7 @@ where
         CS: OutputPin<Error = PinE>,
     {
         let properties = DisplayProperties::new(
-            SpiInterface::new(spi, dc, self.spi_cs),
+            SpiInterface::new(spi, dc, cs),
             self.display_size,
             self.rotation,
         );
@@ -151,14 +137,44 @@ where
 
 /// Represents an unused output pin.
 #[derive(Clone, Copy)]
-pub struct NoOutputPin;
+pub struct NoOutputPin<PinE = ()> {
+    _m: PhantomData<PinE>,
+}
 
-impl OutputPin for NoOutputPin {
-    type Error = ();
-    fn set_low(&mut self) -> Result<(), ()> {
+impl<PinE> NoOutputPin<PinE> {
+    /// Create a new instance of `NoOutputPin`
+    pub fn new() -> Self {
+        Self { _m: PhantomData }
+    }
+}
+
+impl<PinE> OutputPin for NoOutputPin<PinE> {
+    type Error = PinE;
+    fn set_low(&mut self) -> Result<(), PinE> {
         Ok(())
     }
-    fn set_high(&mut self) -> Result<(), ()> {
+    fn set_high(&mut self) -> Result<(), PinE> {
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::NoOutputPin;
+    use embedded_hal::digital::v2::OutputPin;
+
+    enum SomeError {}
+
+    struct SomeDriver<P: OutputPin<Error = SomeError>> {
+        #[allow(dead_code)]
+        p: P,
+    }
+
+    #[test]
+    fn test_output_pin() {
+        let p = NoOutputPin::new();
+        let _d = SomeDriver { p };
+
+        assert!(true);
     }
 }

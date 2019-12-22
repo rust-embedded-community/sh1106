@@ -69,7 +69,12 @@ fn main() -> ! {
         &mut rcc.apb2,
     );
 
-    let mut disp: GraphicsMode<_> = Builder::new().with_spi_cs(cs).connect_spi(spi, dc).into();
+    let mut disp: GraphicsMode<_> = Builder::new().connect_spi(spi, dc, cs).into();
+
+    // If you aren't using the Chip Select pin, use this instead:
+    // let mut disp: GraphicsMode<_> = Builder::new()
+    //     .connect_spi(spi, dc, sh1106::builder::NoOutputPin::new())
+    //     .into();
 
     disp.init().unwrap();
     disp.flush().unwrap();
