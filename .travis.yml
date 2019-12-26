@@ -44,16 +44,14 @@ before_install:
   - pip install linkchecker --user
 
 install:
-  - rustup component add rust-src
   - |
-      SYSROOT=$(rustc --print sysroot)
+    SYSROOT=$(rustc --print sysroot)
 
-      if [[ ! "$SYSROOT" =~ "$TARGET" ]]; then
-        rustup target add $TARGET
-      else
-        echo "Target $TARGET is already installed"
-      fi
-  - source ~/.cargo/env || true
+    if [[ ! "$SYSROOT" =~ "$TARGET" ]]; then
+      rustup target add $TARGET
+    else
+      echo "Target $TARGET is already installed"
+    fi
 
 script:
   - cargo fmt --all -- --check
