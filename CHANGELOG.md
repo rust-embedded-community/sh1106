@@ -4,6 +4,12 @@
 [embedded-graphics](https://crates.io/crates/embedded-graphics) or raw pixel drawing modes and works
 with the [embedded-hal](crates.io/crates/embedded-hal) traits for maximum portability.
 
+## 0.3.0-alpha.4
+
+### Fixed
+
+- Pin `embedded-graphics` dependency versio to `0.6.0-alpha.2`
+
 ## 0.3.0-alpha.3
 
 ### Added

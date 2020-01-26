@@ -20,7 +20,7 @@ embedded-hal = "0.2.3"
 
 [dependencies.embedded-graphics]
 optional = true
-version = "0.6.0-alpha.2"
+version = "=0.6.0-alpha.2"
 
 [dev-dependencies]
 cortex-m = "0.6.0"
