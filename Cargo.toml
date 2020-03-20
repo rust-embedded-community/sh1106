@@ -11,16 +11,19 @@ readme = "README.md"
 repository = "https://github.com/jamwaffles/sh1106"
 version = "0.3.0-alpha.4"
 edition = "2018"
-[badges.travis-ci]
-branch = "master"
-repository = "jamwaffles/sh1106"
+
+[package.metadata.docs.rs]
+default-target = "x86_64-unknown-linux-gnu"
+
+[badges]
+circle-ci = { repository = "jamwaffles/sh1106", branch = "master" }
 
 [dependencies]
 embedded-hal = "0.2.3"
 
 [dependencies.embedded-graphics]
 optional = true
-version = "=0.6.0-alpha.2"
+version = "0.6.0"
 
 [dev-dependencies]
 cortex-m = "0.6.0"

@@ -18,20 +18,20 @@
 #![no_std]
 #![no_main]
 
-extern crate cortex_m;
-extern crate cortex_m_rt as rt;
-extern crate panic_semihosting;
-extern crate stm32f1xx_hal as hal;
-
-use cortex_m_rt::ExceptionFrame;
-use cortex_m_rt::{entry, exception};
-use embedded_graphics::fonts::Font6x8;
-use embedded_graphics::prelude::*;
-use hal::i2c::{BlockingI2c, DutyCycle, Mode};
-use hal::prelude::*;
-use hal::stm32;
-use sh1106::prelude::*;
-use sh1106::Builder;
+use cortex_m_rt::{entry, exception, ExceptionFrame};
+use embedded_graphics::{
+    fonts::{Font6x8, Text},
+    pixelcolor::BinaryColor,
+    prelude::*,
+    style::TextStyle,
+};
+use panic_semihosting as _;
+use sh1106::{prelude::*, Builder};
+use stm32f1xx_hal::{
+    i2c::{BlockingI2c, DutyCycle, Mode},
+    prelude::*,
+    stm32,
+};
 
 #[entry]
 fn main() -> ! {
@@ -70,17 +70,15 @@ fn main() -> ! {
     disp.init().unwrap();
     disp.flush().unwrap();
 
-    disp.draw(
-        Font6x8::render_str("Hello world!")
-            .stroke_width(1)
-            .into_iter(),
-    );
-    disp.draw(
-        Font6x8::render_str("Hello Rust!")
-            .stroke_width(1)
-            .translate(Point::new(0, 16))
-            .into_iter(),
-    );
+    Text::new("Hello world!", Point::zero())
+        .into_styled(TextStyle::new(Font6x8, BinaryColor::On))
+        .draw(&mut disp)
+        .unwrap();
+
+    Text::new("Hello Rust!", Point::new(0, 16))
+        .into_styled(TextStyle::new(Font6x8, BinaryColor::On))
+        .draw(&mut disp)
+        .unwrap();
 
     disp.flush().unwrap();
 

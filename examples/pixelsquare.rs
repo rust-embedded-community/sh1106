@@ -23,18 +23,14 @@
 #![no_std]
 #![no_main]
 
-extern crate cortex_m;
-extern crate cortex_m_rt as rt;
-extern crate panic_semihosting;
-extern crate stm32f1xx_hal as hal;
-
-use cortex_m_rt::ExceptionFrame;
-use cortex_m_rt::{entry, exception};
-use hal::i2c::{BlockingI2c, DutyCycle, Mode};
-use hal::prelude::*;
-use hal::stm32;
-use sh1106::prelude::*;
-use sh1106::Builder;
+use cortex_m_rt::{entry, exception, ExceptionFrame};
+use panic_semihosting as _;
+use sh1106::{prelude::*, Builder};
+use stm32f1xx_hal::{
+    i2c::{BlockingI2c, DutyCycle, Mode},
+    prelude::*,
+    stm32,
+};
 
 #[entry]
 fn main() -> ! {

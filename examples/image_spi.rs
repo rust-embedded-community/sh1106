@@ -25,20 +25,16 @@
 #![no_std]
 #![no_main]
 
-extern crate cortex_m;
-extern crate cortex_m_rt as rt;
-extern crate panic_semihosting;
-extern crate stm32f1xx_hal as hal;
-
-use cortex_m_rt::ExceptionFrame;
-use cortex_m_rt::{entry, exception};
-use embedded_graphics::{image::Image, pixelcolor::BinaryColor, prelude::*};
+use cortex_m_rt::{entry, exception, ExceptionFrame};
+use embedded_graphics::{
+    image::{Image, ImageRawLE},
+    pixelcolor::BinaryColor,
+    prelude::*,
+};
 use embedded_hal::spi;
-use hal::prelude::*;
-use hal::spi::Spi;
-use hal::stm32;
-use sh1106::prelude::*;
-use sh1106::Builder;
+use panic_semihosting as _;
+use sh1106::{prelude::*, Builder};
+use stm32f1xx_hal::{prelude::*, spi::Spi, stm32};
 
 #[entry]
 fn main() -> ! {
@@ -79,10 +75,9 @@ fn main() -> ! {
     disp.init().unwrap();
     disp.flush().unwrap();
 
-    let im: Image<BinaryColor> =
-        Image::new(include_bytes!("./rust.raw"), 64, 64).translate(Point::new(32, 0));
+    let im: ImageRawLE<BinaryColor> = ImageRawLE::new(include_bytes!("./rust.raw"), 64, 64);
 
-    disp.draw(im.into_iter());
+    Image::new(&im, Point::new(32, 0)).draw(&mut disp).unwrap();
 
     disp.flush().unwrap();
 

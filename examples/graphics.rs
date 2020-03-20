@@ -17,21 +17,20 @@
 #![no_std]
 #![no_main]
 
-extern crate cortex_m;
-extern crate cortex_m_rt as rt;
-extern crate panic_semihosting;
-extern crate stm32f1xx_hal as hal;
-
-use cortex_m_rt::ExceptionFrame;
-use cortex_m_rt::{entry, exception};
-use embedded_graphics::pixelcolor::BinaryColor;
-use embedded_graphics::prelude::*;
-use embedded_graphics::primitives::{Circle, Line, Rectangle};
-use hal::i2c::{BlockingI2c, DutyCycle, Mode};
-use hal::prelude::*;
-use hal::stm32;
-use sh1106::prelude::*;
-use sh1106::Builder;
+use cortex_m_rt::{entry, exception, ExceptionFrame};
+use embedded_graphics::{
+    pixelcolor::BinaryColor,
+    prelude::*,
+    primitives::{Circle, Line, Rectangle},
+    style::PrimitiveStyle,
+};
+use panic_semihosting as _;
+use sh1106::{prelude::*, Builder};
+use stm32f1xx_hal::{
+    i2c::{BlockingI2c, DutyCycle, Mode},
+    prelude::*,
+    stm32,
+};
 
 #[entry]
 fn main() -> ! {
@@ -70,33 +69,30 @@ fn main() -> ! {
     disp.init().unwrap();
     disp.flush().unwrap();
 
-    disp.draw(
-        Line::new(Point::new(8, 16 + 16), Point::new(8 + 16, 16 + 16))
-            .stroke(Some(BinaryColor::On))
-            .into_iter(),
-    );
-    disp.draw(
-        Line::new(Point::new(8, 16 + 16), Point::new(8 + 8, 16))
-            .stroke(Some(BinaryColor::On))
-            .into_iter(),
-    );
-    disp.draw(
-        Line::new(Point::new(8 + 16, 16 + 16), Point::new(8 + 8, 16))
-            .stroke(Some(BinaryColor::On))
-            .into_iter(),
-    );
+    Line::new(Point::new(8, 16 + 16), Point::new(8 + 16, 16 + 16))
+        .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
+        .draw(&mut disp)
+        .unwrap();
 
-    disp.draw(
-        Rectangle::new(Point::new(48, 16), Point::new(48 + 16, 16 + 16))
-            .stroke(Some(BinaryColor::On))
-            .into_iter(),
-    );
+    Line::new(Point::new(8, 16 + 16), Point::new(8 + 8, 16))
+        .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
+        .draw(&mut disp)
+        .unwrap();
 
-    disp.draw(
-        Circle::new(Point::new(96, 16 + 8), 8)
-            .stroke(Some(BinaryColor::On))
-            .into_iter(),
-    );
+    Line::new(Point::new(8 + 16, 16 + 16), Point::new(8 + 8, 16))
+        .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
+        .draw(&mut disp)
+        .unwrap();
+
+    Rectangle::new(Point::new(48, 16), Point::new(48 + 16, 16 + 16))
+        .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
+        .draw(&mut disp)
+        .unwrap();
+
+    Circle::new(Point::new(96, 16 + 8), 8)
+        .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
+        .draw(&mut disp)
+        .unwrap();
 
     disp.flush().unwrap();
 

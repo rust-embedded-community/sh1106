@@ -17,8 +17,9 @@
 //! # use hal::prelude::*;
 //! # use hal::stm32f103xx::I2C1;
 //! # use sh1106::interface::I2cInterface;
-//! type OledDisplay =
-//!   GraphicsMode<I2cInterface<I2c<I2C1, (PB8<Alternate<OpenDrain>>, PB9<Alternate<OpenDrain>>)>>>;
+//! type OledDisplay = GraphicsMode<
+//!     I2cInterface<I2c<I2C1, (PB8<Alternate<OpenDrain>>, PB9<Alternate<OpenDrain>>)>>,
+//! >;
 //! ```
 //!
 //! Here's one for SPI1 on an STM32F103xx:
@@ -63,5 +64,4 @@ pub trait DisplayInterface {
     fn send_data(&mut self, buf: &[u8]) -> Result<(), Self::Error>;
 }
 
-pub use self::i2c::I2cInterface;
-pub use self::spi::SpiInterface;
+pub use self::{i2c::I2cInterface, spi::SpiInterface};

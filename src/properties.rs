@@ -1,9 +1,11 @@
 //! Container to store and set display properties
 
-use crate::command::{Command, VcomhLevel};
-use crate::displayrotation::DisplayRotation;
-use crate::displaysize::DisplaySize;
-use crate::interface::DisplayInterface;
+use crate::{
+    command::{Command, VcomhLevel},
+    displayrotation::DisplayRotation,
+    displaysize::DisplaySize,
+    interface::DisplayInterface,
+};
 
 /// Display properties struct
 pub struct DisplayProperties<DI> {
@@ -136,7 +138,7 @@ where
     /// let disp = DisplayProperties::new(
     ///     interface,
     ///     DisplaySize::Display128x64,
-    ///     DisplayRotation::Rotate0
+    ///     DisplayRotation::Rotate0,
     /// );
     /// assert_eq!(disp.get_dimensions(), (128, 64));
     ///
@@ -144,7 +146,7 @@ where
     /// let rotated_disp = DisplayProperties::new(
     ///     interface,
     ///     DisplaySize::Display128x64,
-    ///     DisplayRotation::Rotate90
+    ///     DisplayRotation::Rotate90,
     /// );
     /// assert_eq!(rotated_disp.get_dimensions(), (64, 128));
     /// ```

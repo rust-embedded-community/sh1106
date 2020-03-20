@@ -7,5 +7,4 @@ pub mod displaymode;
 pub mod graphics;
 pub mod raw;
 
-pub use self::graphics::GraphicsMode;
-pub use self::raw::RawMode;
+pub use self::{graphics::GraphicsMode, raw::RawMode};
