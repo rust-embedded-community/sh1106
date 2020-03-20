@@ -25,8 +25,10 @@ extern crate stm32f1xx_hal as hal;
 
 use cortex_m_rt::ExceptionFrame;
 use cortex_m_rt::{entry, exception};
-use embedded_graphics::fonts::Font6x8;
+use embedded_graphics::fonts::{Font6x8, Text};
+use embedded_graphics::pixelcolor::BinaryColor;
 use embedded_graphics::prelude::*;
+use embedded_graphics::style::TextStyle;
 use hal::i2c::{BlockingI2c, DutyCycle, Mode};
 use hal::prelude::*;
 use hal::stm32;
@@ -70,17 +72,15 @@ fn main() -> ! {
     disp.init().unwrap();
     disp.flush().unwrap();
 
-    disp.draw(
-        Font6x8::render_str("Hello world!")
-            .stroke_width(1)
-            .into_iter(),
-    );
-    disp.draw(
-        Font6x8::render_str("Hello Rust!")
-            .stroke_width(1)
-            .translate(Point::new(0, 16))
-            .into_iter(),
-    );
+    Text::new("Hello world!", Point::zero())
+        .into_styled(TextStyle::new(Font6x8, BinaryColor::On))
+        .draw(&mut disp)
+        .unwrap();
+
+    Text::new("Hello Rust!", Point::new(0, 16))
+        .into_styled(TextStyle::new(Font6x8, BinaryColor::On))
+        .draw(&mut disp)
+        .unwrap();
 
     disp.flush().unwrap();
 

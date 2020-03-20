@@ -17,6 +17,7 @@ use cortex_m_rt::{entry, exception};
 use embedded_graphics::pixelcolor::BinaryColor;
 use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::{Circle, Line, Rectangle};
+use embedded_graphics::style::PrimitiveStyle;
 use hal::i2c::{BlockingI2c, DutyCycle, Mode};
 use hal::prelude::*;
 use hal::stm32;
@@ -64,36 +65,33 @@ fn main() -> ! {
 
     let yoffset = 8;
 
-    disp.draw(
-        Line::new(
-            Point::new(8, 16 + yoffset),
-            Point::new(8 + 16, 16 + yoffset),
-        )
-        .stroke(Some(BinaryColor::On))
-        .into_iter(),
-    );
-    disp.draw(
-        Line::new(Point::new(8, 16 + yoffset), Point::new(8 + 8, yoffset))
-            .stroke(Some(BinaryColor::On))
-            .into_iter(),
-    );
-    disp.draw(
-        Line::new(Point::new(8 + 16, 16 + yoffset), Point::new(8 + 8, yoffset))
-            .stroke(Some(BinaryColor::On))
-            .into_iter(),
-    );
+    Line::new(
+        Point::new(8, 16 + yoffset),
+        Point::new(8 + 16, 16 + yoffset),
+    )
+    .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
+    .draw(&mut disp)
+    .unwrap();
 
-    disp.draw(
-        Rectangle::new(Point::new(48, yoffset), Point::new(48 + 16, 16 + yoffset))
-            .stroke(Some(BinaryColor::On))
-            .into_iter(),
-    );
+    Line::new(Point::new(8, 16 + yoffset), Point::new(8 + 8, yoffset))
+        .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
+        .draw(&mut disp)
+        .unwrap();
 
-    disp.draw(
-        Circle::new(Point::new(96, yoffset + 8), 8)
-            .stroke(Some(BinaryColor::On))
-            .into_iter(),
-    );
+    Line::new(Point::new(8 + 16, 16 + yoffset), Point::new(8 + 8, yoffset))
+        .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
+        .draw(&mut disp)
+        .unwrap();
+
+    Rectangle::new(Point::new(48, yoffset), Point::new(48 + 16, 16 + yoffset))
+        .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
+        .draw(&mut disp)
+        .unwrap();
+
+    Circle::new(Point::new(96, yoffset + 8), 8)
+        .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
+        .draw(&mut disp)
+        .unwrap();
 
     disp.flush().unwrap();
 
