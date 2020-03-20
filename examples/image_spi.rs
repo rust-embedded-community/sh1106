@@ -25,11 +25,6 @@
 #![no_std]
 #![no_main]
 
-extern crate cortex_m;
-extern crate cortex_m_rt as rt;
-extern crate panic_semihosting;
-extern crate stm32f1xx_hal as hal;
-
 use cortex_m_rt::{entry, exception, ExceptionFrame};
 use embedded_graphics::{
     image::{Image, ImageRawLE},
@@ -37,8 +32,9 @@ use embedded_graphics::{
     prelude::*,
 };
 use embedded_hal::spi;
-use hal::{prelude::*, spi::Spi, stm32};
+use panic_semihosting as _;
 use sh1106::{prelude::*, Builder};
+use stm32f1xx_hal::{prelude::*, spi::Spi, stm32};
 
 #[entry]
 fn main() -> ! {
