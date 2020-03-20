@@ -28,18 +28,18 @@ extern crate cortex_m_rt as rt;
 extern crate panic_semihosting;
 extern crate stm32f1xx_hal as hal;
 
-use cortex_m_rt::ExceptionFrame;
-use cortex_m_rt::{entry, exception};
+use cortex_m_rt::{entry, exception, ExceptionFrame};
 use embedded_graphics::{
     image::{Image, ImageRawLE},
     pixelcolor::BinaryColor,
     prelude::*,
 };
-use hal::i2c::{BlockingI2c, DutyCycle, Mode};
-use hal::prelude::*;
-use hal::stm32;
-use sh1106::prelude::*;
-use sh1106::Builder;
+use hal::{
+    i2c::{BlockingI2c, DutyCycle, Mode},
+    prelude::*,
+    stm32,
+};
+use sh1106::{prelude::*, Builder};
 
 #[entry]
 fn main() -> ! {

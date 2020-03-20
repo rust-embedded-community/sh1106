@@ -3,8 +3,7 @@
 use hal;
 
 use super::DisplayInterface;
-use crate::command::Page;
-use crate::Error;
+use crate::{command::Page, Error};
 
 /// SH1106 I2C communication interface
 pub struct I2cInterface<I2C> {

@@ -15,14 +15,12 @@
 //! display.flush().unwrap();
 //! ```
 
-use hal::blocking::delay::DelayMs;
-use hal::digital::v2::OutputPin;
+use hal::{blocking::delay::DelayMs, digital::v2::OutputPin};
 
-use crate::displayrotation::DisplayRotation;
-use crate::interface::DisplayInterface;
-use crate::mode::displaymode::DisplayModeTrait;
-use crate::properties::DisplayProperties;
-use crate::Error;
+use crate::{
+    displayrotation::DisplayRotation, interface::DisplayInterface,
+    mode::displaymode::DisplayModeTrait, properties::DisplayProperties, Error,
+};
 
 const BUFFER_SIZE: usize = 132 * 64 / 8;
 
