@@ -8,6 +8,10 @@ with the [embedded-hal](crates.io/crates/embedded-hal) traits for maximum portab
 
 ## [Unreleased] - ReleaseDate
 
+### Fixed
+
+- Fix docs.rs build config
+
 ## [0.3.0] - 2020-03-20
 
 ### Added
@@ -57,8 +61,8 @@ Upgrade to new embedded-graphics `0.6.0-alpha.1` release. Please see the [embedd
 - **(breaking)** #9 Upgraded to [embedded-graphics](https://crates.io/crates/embedded-graphics) 0.6.0-alpha.1
 
 <!-- next-url -->
-[unreleased]: https://github.com/jamwaffles/sh1106/compare/v0.3.0...HEAD
 
+[unreleased]: https://github.com/jamwaffles/sh1106/compare/v0.3.0...HEAD
 [0.3.0]: https://github.com/jamwaffles/sh1106/compare/v0.3.0-alpha.4...v0.3.0
 [0.3.0-alpha.4]: https://github.com/jamwaffles/sh1106/compare/v0.3.0-alpha.3...v0.3.0-alpha.4
 [0.3.0-alpha.3]: https://github.com/jamwaffles/sh1106/compare/v0.3.0-alpha.2...v0.3.0-alpha.3
