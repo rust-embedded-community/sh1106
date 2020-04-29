@@ -160,6 +160,11 @@ where
     pub fn set_rotation(&mut self, rot: DisplayRotation) -> Result<(), DI::Error> {
         self.properties.set_rotation(rot)
     }
+
+    /// Set the display contrast
+    pub fn set_contrast(&mut self, contrast: u8) -> Result<(), DI::Error> {
+        self.properties.set_contrast(contrast)
+    }
 }
 
 #[cfg(feature = "graphics")]
