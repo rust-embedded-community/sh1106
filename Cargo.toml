@@ -1,7 +1,7 @@
 [package]
 authors = ["James Waples <james@wapl.es>"]
 categories = ["embedded", "no-std"]
-description = "I2C driver for the SH1106 OLED display controller"
+description = "I2C/SPI driver for the SH1106 OLED display controller"
 documentation = "https://docs.rs/sh1106"
 exclude = [".travis.yml", ".gitignore"]
 keywords = ["no-std", "sh1106", "oled", "embedded", "embedded-hal-driver"]
