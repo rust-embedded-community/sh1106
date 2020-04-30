@@ -187,4 +187,9 @@ where
             }
         }
     }
+
+    /// Set the display contrast
+    pub fn set_contrast(&mut self, contrast: u8) -> Result<(), DI::Error> {
+        Command::Contrast(contrast).send(&mut self.iface)
+    }
 }

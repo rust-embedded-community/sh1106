@@ -8,6 +8,10 @@ with the [embedded-hal](crates.io/crates/embedded-hal) traits for maximum portab
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- [#20](https://github.com/jamwaffles/sh1106/pull/20) Add `set_contrast` method to set the display contrast/brightness.
+
 ## [0.3.1] - 2020-03-21
 
 ### Fixed
