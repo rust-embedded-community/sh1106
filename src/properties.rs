@@ -60,8 +60,9 @@ where
 
         match self.display_size {
             DisplaySize::Display128x32 => Command::ComPinConfig(false).send(&mut self.iface),
-            DisplaySize::Display128x64 => Command::ComPinConfig(true).send(&mut self.iface),
-            DisplaySize::Display132x64 => Command::ComPinConfig(true).send(&mut self.iface),
+            DisplaySize::Display128x64
+            | DisplaySize::Display128x64NoOffset
+            | DisplaySize::Display132x64 => Command::ComPinConfig(true).send(&mut self.iface),
         }?;
 
         Command::Contrast(0x80).send(&mut self.iface)?;
