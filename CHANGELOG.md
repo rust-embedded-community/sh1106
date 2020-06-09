@@ -8,6 +8,8 @@ with the [embedded-hal](crates.io/crates/embedded-hal) traits for maximum portab
 
 ## [Unreleased] - ReleaseDate
 
+## [0.3.3] - 2020-06-09
+
 ### Added
 
 - [#22](https://github.com/jamwaffles/sh1106/pull/22) Add `DisplaySize::Display128x64NoOffset` variant for 128x64 displays that don't use a 132x64 buffer internally.
@@ -73,8 +75,9 @@ Upgrade to new embedded-graphics `0.6.0-alpha.1` release. Please see the [embedd
 - **(breaking)** #9 Upgraded to [embedded-graphics](https://crates.io/crates/embedded-graphics) 0.6.0-alpha.1
 
 <!-- next-url -->
+[unreleased]: https://github.com/jamwaffles/sh1106/compare/v0.3.3...HEAD
 
-[unreleased]: https://github.com/jamwaffles/sh1106/compare/v0.3.2...HEAD
+[0.3.3]: https://github.com/jamwaffles/sh1106/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/jamwaffles/sh1106/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/jamwaffles/sh1106/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/jamwaffles/sh1106/compare/v0.3.0-alpha.4...v0.3.0
