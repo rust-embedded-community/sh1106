@@ -27,48 +27,48 @@ version: 2
 jobs:
   target-arm-unknown-linux-eabi:
     environment:
-      - TARGET: 'arm-unknown-linux-gnueabi'
+      - TARGET: "arm-unknown-linux-gnueabi"
       - DISABLE_EXAMPLES: 1
     <<: *target_steps
 
   target-armv7-unknown-linux-gnueabihf:
     environment:
-      - TARGET: 'armv7-unknown-linux-gnueabihf'
+      - TARGET: "armv7-unknown-linux-gnueabihf"
       - DISABLE_EXAMPLES: 1
     <<: *target_steps
 
   target-x86_64-unknown-linux-gnu:
     environment:
-      - TARGET: 'x86_64-unknown-linux-gnu'
+      - TARGET: "x86_64-unknown-linux-gnu"
       - DISABLE_EXAMPLES: 1
     <<: *target_steps
 
   target-x86_64-unknown-linux-musl:
     environment:
-      - TARGET: 'x86_64-unknown-linux-musl'
+      - TARGET: "x86_64-unknown-linux-musl"
       - DISABLE_EXAMPLES: 1
     <<: *target_steps
 
   target-thumbv6m-none-eabi:
     environment:
-      - TARGET: 'thumbv6m-none-eabi'
+      - TARGET: "thumbv6m-none-eabi"
       # Disable example builds as they target thumbv7 and up
       - DISABLE_EXAMPLES: 1
     <<: *target_steps
 
   target-thumbv7em-none-eabi:
     environment:
-      - TARGET: 'thumbv7em-none-eabi'
+      - TARGET: "thumbv7em-none-eabi"
     <<: *target_steps
 
   target-thumbv7em-none-eabihf:
     environment:
-      - TARGET: 'thumbv7em-none-eabihf'
+      - TARGET: "thumbv7em-none-eabihf"
     <<: *target_steps
 
   target-thumbv7m-none-eabi:
     environment:
-      - TARGET: 'thumbv7m-none-eabi'
+      - TARGET: "thumbv7m-none-eabi"
     <<: *target_steps
 
 build_jobs: &build_jobs
@@ -93,14 +93,13 @@ workflows:
   version: 2
   build_all:
     <<: *build_jobs
-
-  # Build every day
-  nightly:
-    <<: *build_jobs
-    triggers:
-      - schedule:
-          cron: '0 0 * * *'
-          filters:
-            branches:
-              only:
-                - master
+  # # Build every day
+  # nightly:
+  #   <<: *build_jobs
+  #   triggers:
+  #     - schedule:
+  #         cron: '0 0 * * *'
+  #         filters:
+  #           branches:
+  #             only:
+  #               - master
