@@ -9,7 +9,7 @@ license = "MIT OR Apache-2.0"
 name = "sh1106"
 readme = "README.md"
 repository = "https://github.com/jamwaffles/sh1106"
-version = "0.3.3"
+version = "0.3.4"
 edition = "2018"
 
 [package.metadata.docs.rs]
