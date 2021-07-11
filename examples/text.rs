@@ -20,10 +20,10 @@
 
 use cortex_m_rt::{entry, exception, ExceptionFrame};
 use embedded_graphics::{
-    fonts::{Font6x8, Text},
+    mono_font::{ascii::FONT_6X10, MonoTextStyleBuilder},
     pixelcolor::BinaryColor,
     prelude::*,
-    style::TextStyle,
+    text::{Baseline, Text},
 };
 use panic_semihosting as _;
 use sh1106::{prelude::*, Builder};
@@ -54,7 +54,7 @@ fn main() -> ! {
         (scl, sda),
         &mut afio.mapr,
         Mode::Fast {
-            frequency: 400_000,
+            frequency: 100_000,
             duty_cycle: DutyCycle::Ratio2to1,
         },
         clocks,
@@ -70,13 +70,16 @@ fn main() -> ! {
     display.init().unwrap();
     display.flush().unwrap();
 
-    Text::new("Hello world!", Point::zero())
-        .into_styled(TextStyle::new(Font6x8, BinaryColor::On))
+    let text_style = MonoTextStyleBuilder::new()
+        .font(&FONT_6X10)
+        .text_color(BinaryColor::On)
+        .build();
+
+    Text::with_baseline("Hello world!", Point::zero(), text_style, Baseline::Top)
         .draw(&mut display)
         .unwrap();
 
-    Text::new("Hello Rust!", Point::new(0, 16))
-        .into_styled(TextStyle::new(Font6x8, BinaryColor::On))
+    Text::with_baseline("Hello Rust!", Point::new(0, 16), text_style, Baseline::Top)
         .draw(&mut display)
         .unwrap();
 

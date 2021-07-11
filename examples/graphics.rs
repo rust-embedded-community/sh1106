@@ -21,8 +21,7 @@ use cortex_m_rt::{entry, exception, ExceptionFrame};
 use embedded_graphics::{
     pixelcolor::BinaryColor,
     prelude::*,
-    primitives::{Circle, Line, Rectangle},
-    style::PrimitiveStyle,
+    primitives::{Circle, Line, PrimitiveStyle, Rectangle},
 };
 use panic_semihosting as _;
 use sh1106::{prelude::*, Builder};
@@ -53,7 +52,7 @@ fn main() -> ! {
         (scl, sda),
         &mut afio.mapr,
         Mode::Fast {
-            frequency: 400_000,
+            frequency: 100_000,
             duty_cycle: DutyCycle::Ratio2to1,
         },
         clocks,
@@ -84,12 +83,12 @@ fn main() -> ! {
         .draw(&mut display)
         .unwrap();
 
-    Rectangle::new(Point::new(48, 16), Point::new(48 + 16, 16 + 16))
+    Rectangle::with_corners(Point::new(48, 16), Point::new(48 + 16, 16 + 16))
         .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
         .draw(&mut display)
         .unwrap();
 
-    Circle::new(Point::new(96, 16 + 8), 8)
+    Circle::new(Point::new(88, 16), 16)
         .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
         .draw(&mut display)
         .unwrap();

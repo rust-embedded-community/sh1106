@@ -53,7 +53,7 @@ fn main() -> ! {
         (scl, sda),
         &mut afio.mapr,
         Mode::Fast {
-            frequency: 400_000,
+            frequency: 100_000,
             duty_cycle: DutyCycle::Ratio2to1,
         },
         clocks,
