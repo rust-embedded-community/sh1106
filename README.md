@@ -10,6 +10,12 @@ I2C driver for the SH1106 OLED display written in 100% Rust
 
 ## [Documentation](https://docs.rs/sh1106)
 
+## [Examples]
+
+This crate uses [`probe-run`](https://crates.io/crates/probe-run) to run the examples. Once set up,
+it should be as simple as `cargo run --example <example name> --release`. `--release` will be
+required for some examples to reduce FLASH usage.
+
 From [`examples/text.rs`](examples/text.rs):
 
 ```rust
