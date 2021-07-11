@@ -69,16 +69,18 @@ fn main() -> ! {
         1000,
     );
 
-    let mut disp: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
+    let mut display: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
 
-    disp.init().unwrap();
-    disp.flush().unwrap();
+    display.init().unwrap();
+    display.flush().unwrap();
 
     let im: ImageRawLE<BinaryColor> = ImageRawLE::new(include_bytes!("./rust.raw"), 64, 64);
 
-    Image::new(&im, Point::new(32, 0)).draw(&mut disp).unwrap();
+    Image::new(&im, Point::new(32, 0))
+        .draw(&mut display)
+        .unwrap();
 
-    disp.flush().unwrap();
+    display.flush().unwrap();
 
     loop {}
 }

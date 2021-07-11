@@ -12,10 +12,10 @@
 //! ```rust,ignore
 //! let i2c = I2c::i2c1(/* snip */);
 //!
-//! let mut disp: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
-//! disp.init();
+//! let mut display: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
+//! display.init();
 //!
-//! disp.set_pixel(10, 20, 1);
+//! display.set_pixel(10, 20, 1);
 //! ```
 //!
 //! See the [example](https://github.com/jamwaffles/sh1106/blob/master/examples/graphics_i2c.rs)
@@ -72,17 +72,17 @@
 //!         &mut rcc.apb1,
 //!     );
 //!
-//!     let mut disp: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
+//!     let mut display: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
 //!
-//!     disp.init().unwrap();
-//!     disp.flush().unwrap();
-//!     disp.draw(Font6x8::render_str("Hello world!", 1u8.into()).into_iter());
-//!     disp.draw(
+//!     display.init().unwrap();
+//!     display.flush().unwrap();
+//!     display.draw(Font6x8::render_str("Hello world!", 1u8.into()).into_iter());
+//!     display.draw(
 //!         Font6x8::render_str("Hello Rust!")
 //!             .translate(Coord::new(0, 16))
 //!             .into_iter(),
 //!     );
-//!     disp.flush().unwrap();
+//!     display.flush().unwrap();
 //! }
 //! ```
 

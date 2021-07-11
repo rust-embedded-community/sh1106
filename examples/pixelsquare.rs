@@ -64,36 +64,36 @@ fn main() -> ! {
         1000,
     );
 
-    let mut disp: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
+    let mut display: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
 
-    disp.init().unwrap();
-    disp.flush().unwrap();
+    display.init().unwrap();
+    display.flush().unwrap();
 
     // Top side
-    disp.set_pixel(0, 0, 1);
-    disp.set_pixel(1, 0, 1);
-    disp.set_pixel(2, 0, 1);
-    disp.set_pixel(3, 0, 1);
+    display.set_pixel(0, 0, 1);
+    display.set_pixel(1, 0, 1);
+    display.set_pixel(2, 0, 1);
+    display.set_pixel(3, 0, 1);
 
     // Right side
-    disp.set_pixel(3, 0, 1);
-    disp.set_pixel(3, 1, 1);
-    disp.set_pixel(3, 2, 1);
-    disp.set_pixel(3, 3, 1);
+    display.set_pixel(3, 0, 1);
+    display.set_pixel(3, 1, 1);
+    display.set_pixel(3, 2, 1);
+    display.set_pixel(3, 3, 1);
 
     // Bottom side
-    disp.set_pixel(0, 3, 1);
-    disp.set_pixel(1, 3, 1);
-    disp.set_pixel(2, 3, 1);
-    disp.set_pixel(3, 3, 1);
+    display.set_pixel(0, 3, 1);
+    display.set_pixel(1, 3, 1);
+    display.set_pixel(2, 3, 1);
+    display.set_pixel(3, 3, 1);
 
     // Left side
-    disp.set_pixel(0, 0, 1);
-    disp.set_pixel(0, 1, 1);
-    disp.set_pixel(0, 2, 1);
-    disp.set_pixel(0, 3, 1);
+    display.set_pixel(0, 0, 1);
+    display.set_pixel(0, 1, 1);
+    display.set_pixel(0, 2, 1);
+    display.set_pixel(0, 3, 1);
 
-    disp.flush().unwrap();
+    display.flush().unwrap();
 
     loop {}
 }

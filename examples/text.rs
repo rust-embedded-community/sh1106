@@ -65,22 +65,22 @@ fn main() -> ! {
         1000,
     );
 
-    let mut disp: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
+    let mut display: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
 
-    disp.init().unwrap();
-    disp.flush().unwrap();
+    display.init().unwrap();
+    display.flush().unwrap();
 
     Text::new("Hello world!", Point::zero())
         .into_styled(TextStyle::new(Font6x8, BinaryColor::On))
-        .draw(&mut disp)
+        .draw(&mut display)
         .unwrap();
 
     Text::new("Hello Rust!", Point::new(0, 16))
         .into_styled(TextStyle::new(Font6x8, BinaryColor::On))
-        .draw(&mut disp)
+        .draw(&mut display)
         .unwrap();
 
-    disp.flush().unwrap();
+    display.flush().unwrap();
 
     loop {}
 }

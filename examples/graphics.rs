@@ -64,37 +64,37 @@ fn main() -> ! {
         1000,
     );
 
-    let mut disp: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
+    let mut display: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
 
-    disp.init().unwrap();
-    disp.flush().unwrap();
+    display.init().unwrap();
+    display.flush().unwrap();
 
     Line::new(Point::new(8, 16 + 16), Point::new(8 + 16, 16 + 16))
         .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
-        .draw(&mut disp)
+        .draw(&mut display)
         .unwrap();
 
     Line::new(Point::new(8, 16 + 16), Point::new(8 + 8, 16))
         .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
-        .draw(&mut disp)
+        .draw(&mut display)
         .unwrap();
 
     Line::new(Point::new(8 + 16, 16 + 16), Point::new(8 + 8, 16))
         .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
-        .draw(&mut disp)
+        .draw(&mut display)
         .unwrap();
 
     Rectangle::new(Point::new(48, 16), Point::new(48 + 16, 16 + 16))
         .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
-        .draw(&mut disp)
+        .draw(&mut display)
         .unwrap();
 
     Circle::new(Point::new(96, 16 + 8), 8)
         .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
-        .draw(&mut disp)
+        .draw(&mut display)
         .unwrap();
 
-    disp.flush().unwrap();
+    display.flush().unwrap();
 
     loop {}
 }

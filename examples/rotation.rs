@@ -69,20 +69,20 @@ fn main() -> ! {
         1000,
     );
 
-    let mut disp: GraphicsMode<_> = Builder::new()
+    let mut display: GraphicsMode<_> = Builder::new()
         // Set initial rotation at 90 degrees clockwise
         .with_rotation(DisplayRotation::Rotate90)
         .connect_i2c(i2c)
         .into();
 
-    disp.init().unwrap();
-    disp.flush().unwrap();
+    display.init().unwrap();
+    display.flush().unwrap();
 
     // Contrived example to test builder and instance methods. Sets rotation to 270 degress
     // or 90 degress counterclockwise
-    disp.set_rotation(DisplayRotation::Rotate270).unwrap();
+    display.set_rotation(DisplayRotation::Rotate270).unwrap();
 
-    let (w, h) = disp.get_dimensions();
+    let (w, h) = display.get_dimensions();
 
     let im: ImageRawLE<BinaryColor> = ImageRawLE::new(include_bytes!("./rust.raw"), 64, 64);
 
@@ -90,10 +90,10 @@ fn main() -> ! {
         &im,
         Point::new(w as i32 / 2 - 64 / 2, h as i32 / 2 - 64 / 2),
     )
-    .draw(&mut disp)
+    .draw(&mut display)
     .unwrap();
 
-    disp.flush().unwrap();
+    display.flush().unwrap();
 
     loop {}
 }
