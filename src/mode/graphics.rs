@@ -55,7 +55,7 @@ impl<DI> GraphicsMode<DI>
 where
     DI: DisplayInterface,
 {
-    /// Clear the display buffer. You need to call `disp.flush()` for any effect on the screen
+    /// Clear the display buffer. You need to call `display.flush()` for any effect on the screen
     pub fn clear(&mut self) {
         self.buffer = [0; BUFFER_SIZE];
     }

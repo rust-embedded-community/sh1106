@@ -65,21 +65,23 @@ fn main() -> ! {
         &mut rcc.apb2,
     );
 
-    let mut disp: GraphicsMode<_> = Builder::new().connect_spi(spi, dc, cs).into();
+    let mut display: GraphicsMode<_> = Builder::new().connect_spi(spi, dc, cs).into();
 
     // If you aren't using the Chip Select pin, use this instead:
-    // let mut disp: GraphicsMode<_> = Builder::new()
+    // let mut display: GraphicsMode<_> = Builder::new()
     //     .connect_spi(spi, dc, sh1106::builder::NoOutputPin::new())
     //     .into();
 
-    disp.init().unwrap();
-    disp.flush().unwrap();
+    display.init().unwrap();
+    display.flush().unwrap();
 
     let im: ImageRawLE<BinaryColor> = ImageRawLE::new(include_bytes!("./rust.raw"), 64, 64);
 
-    Image::new(&im, Point::new(32, 0)).draw(&mut disp).unwrap();
+    Image::new(&im, Point::new(32, 0))
+        .draw(&mut display)
+        .unwrap();
 
-    disp.flush().unwrap();
+    display.flush().unwrap();
 
     loop {}
 }
