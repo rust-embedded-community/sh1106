@@ -76,12 +76,12 @@ fn main() -> ! {
 
     Text::new("Hello world!", Point::zero())
         .into_styled(TextStyle::new(Font6x8, BinaryColor::On))
-        .draw(&mut disp)
+        .draw(&mut display)
         .unwrap();
 
     Text::new("Hello Rust!", Point::new(0, 16))
         .into_styled(TextStyle::new(Font6x8, BinaryColor::On))
-        .draw(&mut disp)
+        .draw(&mut display)
         .unwrap();
 
     disp.flush().unwrap();
