@@ -10,17 +10,26 @@
 //!
 //! Connect over SPI with default rotation (0 deg) and size (128x64):
 //!
-//! ```rust,ignore
-//! let spi = /* SPI interface from your HAL of choice */;
-//! let dc = /* GPIO data/command select pin */;
+//! ```rust,no_run
+//! use sh1106::{mode::GraphicsMode, Builder};
+//! let spi = /* SPI interface from your HAL of choice */
+//! # sh1106::test_helpers::SpiStub;
+//! let dc = /* GPIO data/command select pin */
+//! # sh1106::test_helpers::PinStub;
 //!
-//! Builder::new().connect_spi(spi, dc);
+//! // This example does not use a Chip Select pin
+//! let cs = sh1106::builder::NoOutputPin::new();
+//!
+//! Builder::new().connect_spi(spi, dc, cs);
 //! ```
 //!
 //! Connect over I2C, changing lots of options
 //!
-//! ```rust,ignore
-//! let i2c = /* I2C interface from your HAL of choice */;
+//! ```rust,no_run
+//! use sh1106::{displayrotation::DisplayRotation, displaysize::DisplaySize, Builder};
+//!
+//! let i2c = /* I2C interface from your HAL of choice */
+//! # sh1106::test_helpers::I2cStub;
 //!
 //! Builder::new()
 //!     .with_rotation(DisplayRotation::Rotate180)
@@ -33,11 +42,17 @@
 //! by default. You need to coerce them into a mode by specifying a type on assignment. For
 //! example, to use [`GraphicsMode` mode](../mode/graphics/struct.GraphicsMode.html):
 //!
-//! ```rust,ignore
-//! let spi = /* SPI interface from your HAL of choice */;
-//! let dc = /* GPIO data/command select pin */;
+//! ```rust,no_run
+//! use sh1106::{mode::GraphicsMode, Builder};
+//! let spi = /* SPI interface from your HAL of choice */
+//! # sh1106::test_helpers::SpiStub;
+//! let dc = /* GPIO data/command select pin */
+//! # sh1106::test_helpers::PinStub;
 //!
-//! let display: GraphicsMode<_> = Builder::new().connect_spi(spi, dc).into();
+//! // This example does not use a Chip Select pin
+//! let cs = sh1106::builder::NoOutputPin::new();
+//!
+//! let display: GraphicsMode<_> = Builder::new().connect_spi(spi, dc, cs).into();
 //! ```
 
 use core::marker::PhantomData;
@@ -52,6 +67,8 @@ use crate::{
 };
 
 /// Builder struct. Driver options and interface are set using its methods.
+///
+/// See the [module level documentation](crate::builder) for more details.
 #[derive(Clone, Copy)]
 pub struct Builder {
     display_size: DisplaySize,

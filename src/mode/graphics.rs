@@ -1,17 +1,44 @@
-//! Buffered display module for use with the [embedded_graphics] crate
+//! Buffered display module for use with the [embedded-graphics] crate
 //!
-//! ```rust,ignore
-//! let i2c = /* I2C interface from your HAL of choice */;
-//! let display: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
-//! let image = include_bytes!("image_16x16.raw");
+//! ```rust,no_run
+//! use embedded_graphics::{
+//!     pixelcolor::BinaryColor,
+//!     prelude::*,
+//!     primitives::{Circle, Line, PrimitiveStyle, Rectangle},
+//! };
+//! use sh1106::{prelude::*, Builder};
+//! # let i2c = sh1106::test_helpers::I2cStub;
+//!
+//! let mut display: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
 //!
 //! display.init().unwrap();
 //! display.flush().unwrap();
-//! display.draw(Line::new(Coord::new(0, 0), (16, 16), 1.into()).into_iter());
-//! display.draw(Rect::new(Coord::new(24, 0), (40, 16), 1u8.into()).into_iter());
-//! display.draw(Circle::new(Coord::new(64, 8), 8, 1u8.into()).into_iter());
-//! display.draw(Image1BPP::new(image, 0, 24));
-//! display.draw(Font6x8::render_str("Hello Rust!", 1u8.into()).translate(Coord::new(24, 24)).into_iter());
+//!
+//! Line::new(Point::new(8, 16 + 16), Point::new(8 + 16, 16 + 16))
+//!     .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
+//!     .draw(&mut display)
+//!     .unwrap();
+//!
+//! Line::new(Point::new(8, 16 + 16), Point::new(8 + 8, 16))
+//!     .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
+//!     .draw(&mut display)
+//!     .unwrap();
+//!
+//! Line::new(Point::new(8 + 16, 16 + 16), Point::new(8 + 8, 16))
+//!     .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
+//!     .draw(&mut display)
+//!     .unwrap();
+//!
+//! Rectangle::with_corners(Point::new(48, 16), Point::new(48 + 16, 16 + 16))
+//!     .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
+//!     .draw(&mut display)
+//!     .unwrap();
+//!
+//! Circle::new(Point::new(88, 16), 16)
+//!     .into_styled(PrimitiveStyle::with_stroke(BinaryColor::On, 1))
+//!     .draw(&mut display)
+//!     .unwrap();
+//!
 //! display.flush().unwrap();
 //! ```
 

@@ -9,13 +9,18 @@
 //! [`mode::GraphicsMode`](mode/graphics/struct.GraphicsMode.html), you would do something like
 //! this:
 //!
-//! ```rust,ignore
-//! let i2c = I2c::i2c1(/* snip */);
+//! ```rust,no_run
+//! use sh1106::{prelude::*, Builder};
+//! # let i2c = sh1106::test_helpers::I2cStub;
 //!
 //! let mut display: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
-//! display.init();
+//!
+//! display.init().unwrap();
+//! display.flush().unwrap();
 //!
 //! display.set_pixel(10, 20, 1);
+//!
+//! display.flush().unwrap();
 //! ```
 //!
 //! See the [example](https://github.com/jamwaffles/sh1106/blob/master/examples/graphics_i2c.rs)
@@ -34,56 +39,35 @@
 //!
 //! Uses [mode::GraphicsMode] and [embedded_graphics](../embedded_graphics/index.html).
 //!
-//! ```rust,no-run
-//! #![no_std]
+//! ```rust,no_run
+//! use embedded_graphics::{
+//!     mono_font::{ascii::FONT_6X10, MonoTextStyleBuilder},
+//!     pixelcolor::BinaryColor,
+//!     prelude::*,
+//!     text::{Baseline, Text},
+//! };
+//! use sh1106::{prelude::*, Builder};
+//! # let i2c = sh1106::test_helpers::I2cStub;
 //!
-//! extern crate cortex_m;
-//! extern crate embedded_graphics;
-//! extern crate embedded_hal as hal;
-//! extern crate panic_abort;
-//! extern crate sh1106;
-//! extern crate stm32f103xx_hal as blue_pill;
+//! let mut display: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
 //!
-//! use blue_pill::i2c::{DutyCycle, I2c, Mode};
-//! use blue_pill::prelude::*;
-//! use embedded_graphics::fonts::Font6x8;
-//! use embedded_graphics::prelude::*;
-//! use sh1106::{mode::GraphicsMode, Builder};
+//! display.init().unwrap();
+//! display.flush().unwrap();
 //!
-//! fn main() {
-//!     let dp = blue_pill::stm32f103xx::Peripherals::take().unwrap();
-//!     let mut flash = dp.FLASH.constrain();
-//!     let mut rcc = dp.RCC.constrain();
-//!     let clocks = rcc.cfgr.freeze(&mut flash.acr);
-//!     let mut afio = dp.AFIO.constrain(&mut rcc.apb2);
-//!     let mut gpiob = dp.GPIOB.split(&mut rcc.apb2);
-//!     let scl = gpiob.pb8.into_alternate_open_drain(&mut gpiob.crh);
-//!     let sda = gpiob.pb9.into_alternate_open_drain(&mut gpiob.crh);
+//! let text_style = MonoTextStyleBuilder::new()
+//!     .font(&FONT_6X10)
+//!     .text_color(BinaryColor::On)
+//!     .build();
 //!
-//!     let i2c = I2c::i2c1(
-//!         dp.I2C1,
-//!         (scl, sda),
-//!         &mut afio.mapr,
-//!         Mode::Fast {
-//!             frequency: 400_000,
-//!             duty_cycle: DutyCycle::Ratio1to1,
-//!         },
-//!         clocks,
-//!         &mut rcc.apb1,
-//!     );
+//! Text::with_baseline("Hello world!", Point::zero(), text_style, Baseline::Top)
+//!     .draw(&mut display)
+//!     .unwrap();
 //!
-//!     let mut display: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
+//! Text::with_baseline("Hello Rust!", Point::new(0, 16), text_style, Baseline::Top)
+//!     .draw(&mut display)
+//!     .unwrap();
 //!
-//!     display.init().unwrap();
-//!     display.flush().unwrap();
-//!     display.draw(Font6x8::render_str("Hello world!", 1u8.into()).into_iter());
-//!     display.draw(
-//!         Font6x8::render_str("Hello Rust!")
-//!             .translate(Coord::new(0, 16))
-//!             .into_iter(),
-//!     );
-//!     display.flush().unwrap();
-//! }
+//! display.flush().unwrap();
 //! ```
 
 #![no_std]
@@ -110,10 +94,12 @@ extern crate embedded_hal as hal;
 pub mod builder;
 mod command;
 pub mod displayrotation;
-mod displaysize;
+pub mod displaysize;
 pub mod interface;
 pub mod mode;
 pub mod prelude;
 pub mod properties;
+#[doc(hidden)]
+pub mod test_helpers;
 
 pub use crate::builder::{Builder, NoOutputPin};
