@@ -23,13 +23,13 @@ embedded-hal = "0.2.3"
 embedded-graphics-core = { version = "0.3.2", optional = true }
 
 [dev-dependencies]
-cortex-m = "0.6.0"
+cortex-m = "0.7.3"
 cortex-m-rt = "0.6.10"
 embedded-graphics = "0.7.1"
 panic-semihosting = "0.5.2"
 
 [dev-dependencies.stm32f1xx-hal]
-version = "0.4.0"
+version = "0.7.0"
 features = [ "rt", "stm32f103" ]
 
 [features]
