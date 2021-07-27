@@ -50,7 +50,7 @@ where
         Command::DisplayOn(false).send(&mut self.iface)?;
         Command::DisplayClockDiv(0x8, 0x0).send(&mut self.iface)?;
         Command::Multiplex(display_height - 1).send(&mut self.iface)?;
-        Command::DisplayOffset(0).send(&mut self.iface)?;
+        Command::DisplayOffset(0x60).send(&mut self.iface)?;
         Command::StartLine(0).send(&mut self.iface)?;
         // TODO: Ability to turn charge pump on/off
         // Display must be off when performing this command
