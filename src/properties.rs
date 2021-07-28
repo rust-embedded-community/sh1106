@@ -50,7 +50,7 @@ where
         Command::DisplayOn(false).send(&mut self.iface)?;
         Command::StartLine(0).send(&mut self.iface)?;
         Command::Contrast(0x80).send(&mut self.iface)?;
-        Command::SegmentRemap(0x00).send(&mut self.iface)?;
+        Command::SegmentRemap(false).send(&mut self.iface)?;
         Command::Multiplex(128).send(&mut self.iface)?;
         Command::DisplayOffset(0x60).send(&mut self.iface)?;
         Command::DisplayClockDiv(0x8, 0x0).send(&mut self.iface)?;
