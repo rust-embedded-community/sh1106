@@ -42,12 +42,12 @@
 //! display.flush().unwrap();
 //! ```
 
-use hal::{blocking::delay::DelayMs, digital::v2::OutputPin};
-
 use crate::{
     displayrotation::DisplayRotation, interface::DisplayInterface,
     mode::displaymode::DisplayModeTrait, properties::DisplayProperties, Error,
 };
+use embedded_graphics_core::{prelude::Point, primitives::Rectangle};
+use hal::{blocking::delay::DelayMs, digital::v2::OutputPin};
 
 const BUFFER_SIZE: usize = 132 * 64 / 8;
 
@@ -223,6 +223,81 @@ where
             .for_each(|Pixel(pos, color)| {
                 self.set_pixel(pos.x as u32, pos.y as u32, color.is_on().into())
             });
+
+        Ok(())
+    }
+
+    fn fill_solid(&mut self, area: &Rectangle, color: Self::Color) -> Result<(), Self::Error> {
+        let Rectangle {
+            top_left: Point { x, y },
+            size: Size { width, height },
+        } = area.intersection(&self.bounding_box());
+        // swap coordinates if rotated
+        let (x, y, width, height) = match self.properties.get_rotation() {
+            DisplayRotation::Rotate0 | DisplayRotation::Rotate180 => (x, y, width, height),
+            DisplayRotation::Rotate90 | DisplayRotation::Rotate270 => (y, x, height, width),
+        };
+
+        let color = if color.is_on() { 0xff } else { 0x00 };
+
+        let display_width = self.properties.get_size().dimensions().0 as u32;
+
+        let mut remaining = height;
+
+        let mut block = y as u32 / 8;
+
+        // Top partial row
+        if y % 8 > 0 {
+            // Row (aka bit) in this block
+            let row = y as u32 % 8;
+
+            let mask = (2u8.pow(height) - 1) << row;
+
+            let start = (x as u32 + (block * display_width)) as usize;
+
+            let slice = &mut self.buffer[start..(start + width as usize)];
+
+            // Write fill color without clobbering existing data in the other bits of the block
+            slice.iter_mut().for_each(|column| {
+                *column = (*column & !mask) | (color & mask);
+            });
+
+            remaining = remaining.saturating_sub((8 - row).min(height));
+            block += 1;
+        }
+
+        // Full height rows to fill
+        while remaining > 8 {
+            let start = (x as u32 + (block * display_width)) as usize;
+
+            let slice = &mut self.buffer[start..(start + width as usize)];
+
+            slice.fill(color);
+
+            block += 1;
+            remaining = remaining.saturating_sub(8);
+        }
+
+        // Bottom partial row
+        if remaining > 0 {
+            // Row (aka bit) in this block
+            let row = 8 - (remaining % 8);
+
+            let mask = (2u8.pow(height) - 1) >> row;
+
+            let start = (x as u32 + (block * display_width)) as usize;
+
+            let slice = &mut self.buffer[start..(start + width as usize)];
+
+            // Write fill color without clobbering existing data in the other bits of the block
+            slice.iter_mut().for_each(|column| {
+                *column = (*column & !mask) | (color & mask);
+            });
+
+            remaining = remaining.saturating_sub(8);
+        }
+
+        debug_assert_eq!(remaining, 0);
 
         Ok(())
     }
