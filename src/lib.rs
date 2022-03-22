@@ -37,7 +37,7 @@
 //!
 //! ## Draw some text to the display
 //!
-//! Uses [mode::GraphicsMode] and [embedded_graphics](../embedded_graphics/index.html).
+//! Uses [mode::GraphicsMode] and [embedded_graphics](https://docs.rs/embedded_graphics).
 //!
 //! ```rust,no_run
 //! use embedded_graphics::{

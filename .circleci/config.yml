@@ -5,8 +5,12 @@ target_steps: &target_steps
     - checkout
     - restore_cache:
         key: v1-sh1106-{{ .Environment.CIRCLE_JOB }}-{{ checksum "Cargo.toml" }}
-    - run: sudo apt install -qq linkchecker
+    - run: rustup install 1.57.0 --profile minimal
+    - run: cargo +1.57.0 install cargo-deadlinks --target x86_64-unknown-linux-gnu
     - run: rustup default ${RUST_VERSION:-stable}
+    # For docs gen
+    - run: rustup target add thumbv7m-none-eabi
+    - run: rustup target add thumbv7em-none-eabihf
     - run: rustup component add rustfmt
     - run: |
         SYSROOT=$(rustc --print sysroot)
