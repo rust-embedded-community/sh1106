@@ -242,62 +242,33 @@ where
 
         let display_width = self.properties.get_size().dimensions().0 as u32;
 
-        let mut remaining = height;
+        // Display is at most 128 pixels tall when rotated by 90º or 270º so we'll use a u128 here
+        let fill = 2u128.pow(height) - 1;
+        let moved = fill << y;
 
-        let mut block = y as u32 / 8;
+        let start_block = (y / 8) as usize;
 
-        // Top partial row
-        if y % 8 > 0 {
-            // Row (aka bit) in this block
-            let row = y as u32 % 8;
+        // Represents a bit mask of a single column of the entire display height
+        let whole_column = moved.to_le_bytes();
 
-            let mask = (2u8.pow(height) - 1) << row;
+        let end_block = start_block + (height as usize / 8 + 1);
 
-            let start = (x as u32 + (block * display_width)) as usize;
+        // Ensure we don't wrap off the bottom of the screen
+        let end_block = end_block.min(7);
 
-            let slice = &mut self.buffer[start..(start + width as usize)];
+        for current_x in x..(x + width as i32) {
+            // let new_blocks = &whole_column[start_block..=end_block.min(8)];
 
-            // Write fill color without clobbering existing data in the other bits of the block
-            slice.iter_mut().for_each(|column| {
-                *column = (*column & !mask) | (color & mask);
-            });
+            for block in start_block..=end_block {
+                let buffer_offset = current_x as usize + display_width as usize * block;
 
-            remaining = remaining.saturating_sub((8 - row).min(height));
-            block += 1;
+                let current = self.buffer[buffer_offset];
+
+                let mask = whole_column[block];
+
+                self.buffer[buffer_offset] = (current & !mask) | (color & mask);
+            }
         }
-
-        // Full height rows to fill
-        while remaining > 8 {
-            let start = (x as u32 + (block * display_width)) as usize;
-
-            let slice = &mut self.buffer[start..(start + width as usize)];
-
-            slice.fill(color);
-
-            block += 1;
-            remaining = remaining.saturating_sub(8);
-        }
-
-        // Bottom partial row
-        if remaining > 0 {
-            // Row (aka bit) in this block
-            let row = 8 - (remaining % 8);
-
-            let mask = (2u8.pow(height) - 1) >> row;
-
-            let start = (x as u32 + (block * display_width)) as usize;
-
-            let slice = &mut self.buffer[start..(start + width as usize)];
-
-            // Write fill color without clobbering existing data in the other bits of the block
-            slice.iter_mut().for_each(|column| {
-                *column = (*column & !mask) | (color & mask);
-            });
-
-            remaining = remaining.saturating_sub(8);
-        }
-
-        debug_assert_eq!(remaining, 0);
 
         Ok(())
     }
