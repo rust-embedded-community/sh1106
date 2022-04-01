@@ -1,20 +1,5 @@
-//! Bounce a DVD player logo around the screen
-//!
-//! Like this, but with no color changing: https://bouncingdvdlogo.com/
-//!
-//! This example is for the STM32F103 "Blue Pill" board using I2C1.
-//!
-//! Wiring connections are as follows for a CRIUS-branded display:
-//!
-//! ```
-//!      Display -> Blue Pill
-//! (black)  GND -> GND
-//! (red)    +5V -> VCC
-//! (yellow) SDA -> PB9
-//! (green)  SCL -> PB8
-//! ```
-//!
-//! Run on a Blue Pill with `cargo run --example rtic_dvd`.
+//! Meant for development use only. Prints the time taken to draw a bunch of rectangles to the
+//! display. Originally created to benchmark the `fill_solid` method.
 
 #![no_std]
 #![no_main]
