@@ -257,8 +257,6 @@ where
         let end_block = end_block.min(7);
 
         for current_x in x..(x + width as i32) {
-            // let new_blocks = &whole_column[start_block..=end_block.min(8)];
-
             for block in start_block..=end_block {
                 let buffer_offset = current_x as usize + display_width as usize * block;
 
