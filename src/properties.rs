@@ -1,7 +1,7 @@
 //! Container to store and set display properties
 
 use crate::{
-    command::{Command, VcomhLevel},
+    command::{Command, Page, VcomhLevel},
     displayrotation::DisplayRotation,
     displaysize::DisplaySize,
     interface::DisplayInterface,
@@ -113,10 +113,24 @@ where
         Ok(())
     }
 
+    pub(crate) fn draw_page(
+        &mut self,
+        page: Page,
+        start_column: u8,
+        buffer: &[u8],
+    ) -> Result<(), DI::Error> {
+        self.set_page_start(page, start_column)?;
+        self.iface.send_data(buffer)
+    }
+
     fn send_draw_address(&mut self) -> Result<(), DI::Error> {
-        Command::PageAddress(self.draw_row.into()).send(&mut self.iface)?;
-        Command::ColumnAddressLow(0xF & self.draw_column).send(&mut self.iface)?;
-        Command::ColumnAddressHigh(0xF & (self.draw_column >> 4)).send(&mut self.iface)
+        self.set_page_start(self.draw_row.into(), self.draw_column)
+    }
+
+    fn set_page_start(&mut self, page: Page, column: u8) -> Result<(), DI::Error> {
+        Command::PageAddress(page.into()).send(&mut self.iface)?;
+        Command::ColumnAddressLow(0xF & column).send(&mut self.iface)?;
+        Command::ColumnAddressHigh(0xF & (column >> 4)).send(&mut self.iface)
     }
 
     /// Get the configured display size

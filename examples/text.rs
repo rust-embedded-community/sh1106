@@ -26,7 +26,7 @@ use embedded_graphics::{
     text::{Baseline, Text},
 };
 use panic_semihosting as _;
-use sh1106::{prelude::*, Builder};
+use sh1106::{mode::graphics::Clear, prelude::*, Builder};
 use stm32f1xx_hal::{
     i2c::{BlockingI2c, DutyCycle, Mode},
     prelude::*,
@@ -68,7 +68,7 @@ fn main() -> ! {
     let mut display: GraphicsMode<_> = Builder::new().connect_i2c(i2c).into();
 
     display.init().unwrap();
-    display.flush().unwrap();
+    display.clear(Clear::BufferAndDisplay).unwrap();
 
     let text_style = MonoTextStyleBuilder::new()
         .font(&FONT_6X10)
@@ -79,7 +79,7 @@ fn main() -> ! {
         .draw(&mut display)
         .unwrap();
 
-    Text::with_baseline("Hello Rust!", Point::new(0, 16), text_style, Baseline::Top)
+    Text::with_baseline("Hello Rust!", Point::new(0, 10), text_style, Baseline::Top)
         .draw(&mut display)
         .unwrap();
 
