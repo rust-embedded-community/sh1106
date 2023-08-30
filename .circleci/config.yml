@@ -1,10 +1,10 @@
 target_steps: &target_steps
   docker:
-    - image: circleci/rust:1.42.0
+    - image: cimg/rust:1.72.0
   steps:
     - checkout
     - restore_cache:
-        key: v1-sh1106-{{ .Environment.CIRCLE_JOB }}-{{ checksum "Cargo.toml" }}
+        key: v2-sh1106-{{ .Environment.CIRCLE_JOB }}-{{ checksum "Cargo.toml" }}
     - run: sudo apt install -qq linkchecker
     - run: rustup default ${RUST_VERSION:-stable}
     - run: rustup component add rustfmt
@@ -18,7 +18,7 @@ target_steps: &target_steps
         fi
     - run: ./build.sh
     - save_cache:
-        key: v1-sh1106-{{ .Environment.CIRCLE_JOB }}-{{ checksum "Cargo.toml" }}
+        key: v2-sh1106-{{ .Environment.CIRCLE_JOB }}-{{ checksum "Cargo.toml" }}
         paths:
           - ./target
           - /home/ubuntu/.cargo
