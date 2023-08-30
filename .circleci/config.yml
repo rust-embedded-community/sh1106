@@ -5,7 +5,6 @@ target_steps: &target_steps
     - checkout
     - restore_cache:
         key: v2-sh1106-{{ .Environment.CIRCLE_JOB }}-{{ checksum "Cargo.toml" }}
-    - run: sudo apt install -qq linkchecker
     - run: rustup default ${RUST_VERSION:-stable}
     - run: rustup component add rustfmt
     - run: |
