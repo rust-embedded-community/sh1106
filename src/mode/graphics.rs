@@ -42,6 +42,7 @@
 //! display.flush().unwrap();
 //! ```
 
+use embedded_graphics_core::{prelude::*, primitives::Rectangle};
 use hal::{blocking::delay::DelayMs, digital::v2::OutputPin};
 
 use crate::{
@@ -224,6 +225,42 @@ where
                 self.set_pixel(pos.x as u32, pos.y as u32, color.is_on().into())
             });
 
+        Ok(())
+    }
+
+    fn fill_solid(&mut self, area: &Rectangle, color: Self::Color) -> Result<(), Self::Error> {
+        let Rectangle { top_left: Point { x, y }, size: Size { width, height } } = area.intersection(&self.bounding_box());
+        // swap coordinates if rotated
+        let (x, y, width, height) = match self.properties.get_rotation() {
+            DisplayRotation::Rotate0 | DisplayRotation::Rotate180 => (x, y, width, height),
+            DisplayRotation::Rotate90 | DisplayRotation::Rotate270 => (y , x, height, width),
+        };
+        let fill = if color.is_on() { 0xff } else { 0 };
+
+        // 8-tall and aligned writes
+        if y % 8 == 0 && height % 8 == 0 {
+            let display_width = self.properties.get_size().dimensions().0;
+            // fill whole 8px tall chunks
+            for block in (y / 8)..((height as i32 + y) / 8) {
+                self.buffer[(x + block * display_width as i32) as usize..][..width as usize].fill(fill);
+            }
+        } else if y / 8 - (y + height as i32) / 8 > 1 {
+            // perform a fast draw in solid fills that include a 8 row tall block
+            // slower fallback draw, top
+            let top_height = 8 - y % 8;
+            self.fill_solid(&Rectangle::new(Point::new(x, y), Size::new(width, top_height as u32)), color)?;
+            // slower fallback draw, bottom
+            let bottom_y = y + height as i32 - (y + height as i32) % 8;
+            let bottom_height = (y as u32 + height) % 8;
+            self.fill_solid(&Rectangle::new(Point::new(x, bottom_y), Size::new(width, bottom_height)), color)?;
+            // fast draw for the aligned block in the middle
+            let mid_block = (y / 8 + 1) as u32;
+            let mid_count = mid_block - (y as u32 + height) / 8 * 8;
+            self.fill_solid(&Rectangle::new(Point::new(x, mid_block as i32 * 8), Size::new(width, mid_count * 8)), color)?;
+        } else {
+            // no happy path :'(
+            self.fill_contiguous(area, core::iter::repeat(color))?;
+        }
         Ok(())
     }
 }
