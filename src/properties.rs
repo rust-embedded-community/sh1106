@@ -48,10 +48,12 @@ where
         let display_rotation = self.display_rotation;
 
         Command::DisplayOn(false).send(&mut self.iface)?;
-        Command::DisplayClockDiv(0x8, 0x0).send(&mut self.iface)?;
-        Command::Multiplex(display_height - 1).send(&mut self.iface)?;
-        Command::DisplayOffset(0).send(&mut self.iface)?;
         Command::StartLine(0).send(&mut self.iface)?;
+        Command::Contrast(0x80).send(&mut self.iface)?;
+        Command::SegmentRemap(false).send(&mut self.iface)?;
+        Command::Multiplex(128).send(&mut self.iface)?;
+        Command::DisplayOffset(0x60).send(&mut self.iface)?;
+        Command::DisplayClockDiv(0x8, 0x0).send(&mut self.iface)?;
         // TODO: Ability to turn charge pump on/off
         // Display must be off when performing this command
         Command::ChargePump(true).send(&mut self.iface)?;
@@ -60,12 +62,13 @@ where
 
         match self.display_size {
             DisplaySize::Display128x32 => Command::ComPinConfig(false).send(&mut self.iface),
-            DisplaySize::Display128x64
+            DisplaySize::Display128x128
+            | DisplaySize::Display128x64
             | DisplaySize::Display128x64NoOffset
             | DisplaySize::Display132x64 => Command::ComPinConfig(true).send(&mut self.iface),
         }?;
 
-        Command::Contrast(0x80).send(&mut self.iface)?;
+       
         Command::PreChargePeriod(0x1, 0xF).send(&mut self.iface)?;
         Command::VcomhDeselect(VcomhLevel::Auto).send(&mut self.iface)?;
         Command::AllOn(false).send(&mut self.iface)?;
