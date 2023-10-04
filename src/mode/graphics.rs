@@ -192,6 +192,11 @@ where
     pub fn set_contrast(&mut self, contrast: u8) -> Result<(), DI::Error> {
         self.properties.set_contrast(contrast)
     }
+
+    /// Power on/off the display
+    pub fn power(&mut self, on: bool) -> Result<(), DI::Error> {
+        self.properties.power(on)
+    }
 }
 
 #[cfg(feature = "graphics")]

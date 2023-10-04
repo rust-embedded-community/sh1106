@@ -167,4 +167,9 @@ where
     pub fn set_contrast(&mut self, contrast: u8) -> Result<(), DI::Error> {
         Command::Contrast(contrast).send(&mut self.iface)
     }
+
+    /// Power on/off the display
+    pub fn power(&mut self, on: bool) -> Result<(), DI::Error> {
+        Command::DisplayOn(on).send(&mut self.iface)
+    }
 }
