@@ -33,6 +33,7 @@ where
     CS: OutputPin<Error = PinE>,
 {
     type Error = Error<CommE, PinE>;
+    type Interface = (SPI, DC, CS);
 
     fn init(&mut self) -> Result<(), Self::Error> {
         self.cs.set_high().map_err(Error::Pin)
@@ -58,4 +59,9 @@ where
 
         self.cs.set_high().map_err(Error::Pin)
     }
+
+    fn release(self) -> Self::Interface {
+        (self.spi, self.dc, self.cs)
+    }
+    
 }

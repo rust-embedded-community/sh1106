@@ -26,6 +26,7 @@ where
     I2C: hal::blocking::i2c::Write<Error = CommE>,
 {
     type Error = Error<CommE, ()>;
+    type Interface = I2C;
 
     fn init(&mut self) -> Result<(), Self::Error> {
         Ok(())
@@ -81,5 +82,9 @@ where
         }
 
         Ok(())
+    }
+
+    fn release(self) -> Self::Interface {
+        self.i2c
     }
 }

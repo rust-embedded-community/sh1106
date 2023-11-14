@@ -167,4 +167,9 @@ where
     pub fn set_contrast(&mut self, contrast: u8) -> Result<(), DI::Error> {
         Command::Contrast(contrast).send(&mut self.iface)
     }
+
+    /// Release the underlying interface
+    pub fn release_interface(self) -> DI::Interface {
+        self.iface.release()
+    }
 }

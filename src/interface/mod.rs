@@ -55,6 +55,8 @@ pub mod spi;
 pub trait DisplayInterface {
     /// Interface error type
     type Error;
+    /// Underlying interface type
+    type Interface;
 
     /// Initialize device.
     fn init(&mut self) -> Result<(), Self::Error>;
@@ -62,6 +64,8 @@ pub trait DisplayInterface {
     fn send_commands(&mut self, cmd: &[u8]) -> Result<(), Self::Error>;
     /// Send data to display.
     fn send_data(&mut self, buf: &[u8]) -> Result<(), Self::Error>;
+    /// Release the interface
+    fn release(self) -> Self::Interface;
 }
 
 pub use self::{i2c::I2cInterface, spi::SpiInterface};
