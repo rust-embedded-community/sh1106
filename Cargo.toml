@@ -9,7 +9,7 @@ license = "MIT OR Apache-2.0"
 name = "sh1106"
 readme = "README.md"
 repository = "https://github.com/jamwaffles/sh1106"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2018"
 
 [package.metadata.docs.rs]
@@ -20,12 +20,12 @@ circle-ci = { repository = "jamwaffles/sh1106", branch = "master" }
 
 [dependencies]
 embedded-hal = "0.2.3"
-embedded-graphics-core = { version = "0.3.2", optional = true }
+embedded-graphics-core = { version = "0.4.0", optional = true }
 
 [dev-dependencies]
 cortex-m = "0.7.3"
 cortex-m-rt = "0.6.10"
-embedded-graphics = "0.7.1"
+embedded-graphics = "0.8.0"
 heapless = "0.7.10"
 panic-semihosting = "0.5.2"
 cortex-m-rtic = "0.5.9"

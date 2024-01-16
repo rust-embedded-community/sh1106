@@ -1,12 +1,10 @@
 target_steps: &target_steps
   docker:
-    - image: cimg/rust:1.50.0
+    - image: cimg/rust:1.72.0
   steps:
     - checkout
     - restore_cache:
-        key: v1-sh1106-{{ .Environment.CIRCLE_JOB }}-{{ checksum "Cargo.toml" }}
-    - run: rustup install 1.57.0 --profile minimal
-    - run: cargo +1.57.0 install cargo-deadlinks --target x86_64-unknown-linux-gnu
+        key: v2-sh1106-{{ .Environment.CIRCLE_JOB }}-{{ checksum "Cargo.toml" }}
     - run: rustup default ${RUST_VERSION:-stable}
     # For docs gen
     - run: rustup target add thumbv7m-none-eabi
@@ -22,7 +20,7 @@ target_steps: &target_steps
         fi
     - run: ./build.sh
     - save_cache:
-        key: v1-sh1106-{{ .Environment.CIRCLE_JOB }}-{{ checksum "Cargo.toml" }}
+        key: v2-sh1106-{{ .Environment.CIRCLE_JOB }}-{{ checksum "Cargo.toml" }}
         paths:
           - ./target
           - /home/ubuntu/.cargo
