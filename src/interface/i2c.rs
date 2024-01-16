@@ -3,7 +3,7 @@
 use hal;
 
 use super::DisplayInterface;
-use crate::Error;
+use crate::{command::Page, Error};
 
 /// SH1106 I2C communication interface
 pub struct I2cInterface<I2C> {
@@ -52,37 +52,33 @@ where
             return Ok(());
         }
 
-        // let mut page = Page::Page0 as u8;
+        let mut page = Page::Page0 as u8;
 
         // Display width plus 4 start bytes
         let mut writebuf: [u8; BUFLEN] = [0; BUFLEN];
 
         writebuf[0] = 0x40; // Following bytes are data bytes
 
-        // for chunk in buf.chunks(CHUNKLEN) {
-        let sub_buf = &mut writebuf[1..(buf.len() + 1)];
+        for chunk in buf.chunks(CHUNKLEN) {
+            // Copy over all data from buffer, leaving the data command byte intact
+            writebuf[1..BUFLEN].copy_from_slice(&chunk);
 
-        // Copy over all data from buffer, leaving the data command byte intact
-        sub_buf.copy_from_slice(&buf);
+            self.i2c
+                .write(
+                    self.addr,
+                    &[
+                        0x00, // Command
+                        page, // Page address
+                        0x02, // Lower column address
+                        0x10, // Upper column address (always zero, base is 10h)
+                    ],
+                )
+                .map_err(Error::Comm)?;
 
-        let send_buf = &writebuf[0..(buf.len() + 1)];
+            self.i2c.write(self.addr, &writebuf).map_err(Error::Comm)?;
 
-        // self.i2c
-        //     .write(
-        //         self.addr,
-        //         &[
-        //             0x00, // Command
-        //             page, // Page address
-        //             0x02, // Lower column address
-        //             0x10, // Upper column address (always zero, base is 10h)
-        //         ],
-        //     )
-        //     .map_err(Error::Comm)?;
-
-        self.i2c.write(self.addr, &send_buf).map_err(Error::Comm)?;
-
-        // page += 1;
-        // }
+            page += 1;
+        }
 
         Ok(())
     }

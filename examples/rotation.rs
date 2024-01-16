@@ -30,7 +30,7 @@ use embedded_graphics::{
     prelude::*,
 };
 use panic_semihosting as _;
-use sh1106::{mode::graphics::Clear, prelude::*, Builder};
+use sh1106::{prelude::*, Builder};
 use stm32f1xx_hal::{
     i2c::{BlockingI2c, DutyCycle, Mode},
     prelude::*,
@@ -76,7 +76,7 @@ fn main() -> ! {
         .into();
 
     display.init().unwrap();
-    display.clear(Clear::BufferAndDisplay).unwrap();
+    display.flush().unwrap();
 
     // Contrived example to test builder and instance methods. Sets rotation to 270 degress
     // or 90 degress counterclockwise

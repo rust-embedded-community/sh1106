@@ -43,25 +43,13 @@
 //! ```
 
 use crate::{
-    command::Page, displayrotation::DisplayRotation, interface::DisplayInterface,
+    displayrotation::DisplayRotation, interface::DisplayInterface,
     mode::displaymode::DisplayModeTrait, properties::DisplayProperties, Error,
 };
 use embedded_graphics_core::{prelude::Point, primitives::Rectangle};
 use hal::{blocking::delay::DelayMs, digital::v2::OutputPin};
 
-/// What to clear.
-#[derive(Debug, Copy, Clone)]
-pub enum Clear {
-    /// Clear the display buffer only, leaving the display contents alone.
-    Buffer,
-
-    /// Clear both the buffer and display.
-    BufferAndDisplay,
-}
-
-// const BUFFER_SIZE: usize = 132 * 64 / 8;
-const W: u32 = 132;
-const H: u32 = 64;
+const BUFFER_SIZE: usize = 132 * 64 / 8;
 
 /// Graphics mode handler
 pub struct GraphicsMode<DI>
@@ -69,7 +57,7 @@ where
     DI: DisplayInterface,
 {
     properties: DisplayProperties<DI>,
-    buffer: PackedBuffer<W, H, { (W * H / 8) as usize }>,
+    buffer: [u8; BUFFER_SIZE],
 }
 
 impl<DI> DisplayModeTrait<DI> for GraphicsMode<DI>
@@ -80,7 +68,7 @@ where
     fn new(properties: DisplayProperties<DI>) -> Self {
         GraphicsMode {
             properties,
-            buffer: PackedBuffer::new(),
+            buffer: [0; BUFFER_SIZE],
         }
     }
 
@@ -94,21 +82,9 @@ impl<DI> GraphicsMode<DI>
 where
     DI: DisplayInterface,
 {
-    /// Clear the display buffer.
-    pub fn clear(&mut self, clear: Clear) -> Result<(), DI::Error> {
-        self.buffer = PackedBuffer::new();
-
-        if matches!(clear, Clear::BufferAndDisplay) {
-            let display_size = self.properties.get_size();
-            let column_offset = display_size.column_offset();
-
-            for i in 0..8 {
-                self.properties
-                    .draw_page(Page::from(i * 8), column_offset, &[0x00; 128])?;
-            }
-        }
-
-        Ok(())
+    /// Clear the display buffer. You need to call `display.flush()` for any effect on the screen
+    pub fn clear(&mut self) {
+        self.buffer = [0; BUFFER_SIZE];
     }
 
     /// Reset display
@@ -128,46 +104,72 @@ where
         rst.set_high().map_err(Error::Pin)
     }
 
-    /// Write out data to display.
+    /// Write out data to display
     pub fn flush(&mut self) -> Result<(), DI::Error> {
         let display_size = self.properties.get_size();
 
-        let active = self.buffer.active_area().intersection(&self.bounding_box());
-        let start_page = (active.top_left.y / 8) as u8;
-        let start_column = active.top_left.x as u8;
-
+        // Ensure the display buffer is at the origin of the display before we send the full frame
+        // to prevent accidental offsets
+        let (display_width, display_height) = display_size.dimensions();
         let column_offset = display_size.column_offset();
+        self.properties.set_draw_area(
+            (column_offset, 0),
+            (display_width + column_offset, display_height),
+        )?;
 
-        for (i, block) in self.buffer.active_blocks().enumerate() {
-            let page = Page::from((start_page + i as u8) * 8);
+        let length = (display_width as usize) * (display_height as usize) / 8;
 
-            self.properties
-                .draw_page(page, column_offset + start_column, block)?;
-        }
-
-        Ok(())
+        self.properties.draw(&self.buffer[..length])
     }
 
     /// Turn a pixel on or off. A non-zero `value` is treated as on, `0` as off. If the X and Y
     /// coordinates are out of the bounds of the display, this method call is a noop.
     pub fn set_pixel(&mut self, x: u32, y: u32, value: u8) {
+        let (display_width, _) = self.properties.get_size().dimensions();
         let display_rotation = self.properties.get_rotation();
 
-        let point = match display_rotation {
-            DisplayRotation::Rotate0 | DisplayRotation::Rotate180 => Point::new(x as i32, y as i32),
+        let idx = match display_rotation {
+            DisplayRotation::Rotate0 | DisplayRotation::Rotate180 => {
+                if x >= display_width as u32 {
+                    return;
+                }
+                ((y as usize) / 8 * display_width as usize) + (x as usize)
+            }
+
             DisplayRotation::Rotate90 | DisplayRotation::Rotate270 => {
-                Point::new(y as i32, x as i32)
+                if y >= display_width as u32 {
+                    return;
+                }
+                ((x as usize) / 8 * display_width as usize) + (y as usize)
             }
         };
 
-        self.buffer.set_pixel(
-            point,
-            if value == 0 {
-                BinaryColor::Off
-            } else {
-                BinaryColor::On
-            },
-        )
+        if idx >= self.buffer.len() {
+            return;
+        }
+
+        let (byte, bit) = match display_rotation {
+            DisplayRotation::Rotate0 | DisplayRotation::Rotate180 => {
+                let byte =
+                    &mut self.buffer[((y as usize) / 8 * display_width as usize) + (x as usize)];
+                let bit = 1 << (y % 8);
+
+                (byte, bit)
+            }
+            DisplayRotation::Rotate90 | DisplayRotation::Rotate270 => {
+                let byte =
+                    &mut self.buffer[((x as usize) / 8 * display_width as usize) + (y as usize)];
+                let bit = 1 << (x % 8);
+
+                (byte, bit)
+            }
+        };
+
+        if value == 0 {
+            *byte &= !bit;
+        } else {
+            *byte |= bit;
+        }
     }
 
     /// Display is set up in column mode, i.e. a byte walks down a column of 8 pixels from
@@ -200,7 +202,6 @@ use embedded_graphics_core::{
     pixelcolor::BinaryColor,
     Pixel,
 };
-use packed_display_buffer::PackedBuffer;
 
 #[cfg(feature = "graphics")]
 impl<DI> DrawTarget for GraphicsMode<DI>
@@ -227,14 +228,47 @@ where
     }
 
     fn fill_solid(&mut self, area: &Rectangle, color: Self::Color) -> Result<(), Self::Error> {
-        self.buffer.fill_solid(area, color)
-    }
+        let Rectangle {
+            top_left: Point { x, y },
+            size: Size { width, height },
+        } = area.intersection(&self.bounding_box());
+        // swap coordinates if rotated
+        let (x, y, width, height) = match self.properties.get_rotation() {
+            DisplayRotation::Rotate0 | DisplayRotation::Rotate180 => (x, y, width, height),
+            DisplayRotation::Rotate90 | DisplayRotation::Rotate270 => (y, x, height, width),
+        };
 
-    fn fill_contiguous<I>(&mut self, area: &Rectangle, colors: I) -> Result<(), Self::Error>
-    where
-        I: IntoIterator<Item = Self::Color>,
-    {
-        self.buffer.fill_contiguous(area, colors)
+        let color = if color.is_on() { 0xff } else { 0x00 };
+
+        let display_width = self.properties.get_size().dimensions().0 as u32;
+
+        // Display is at most 128 pixels tall when rotated by 90º or 270º so we'll use a u128 here
+        let fill = 2u128.pow(height) - 1;
+        let moved = fill << y;
+
+        let start_block = (y / 8) as usize;
+
+        // Represents a bit mask of a single column of the entire display height
+        let whole_column = moved.to_le_bytes();
+
+        let end_block = start_block + (height as usize / 8 + 1);
+
+        // Ensure we don't wrap off the bottom of the screen
+        let end_block = end_block.min(7);
+
+        for current_x in x..(x + width as i32) {
+            for block in start_block..=end_block {
+                let buffer_offset = current_x as usize + display_width as usize * block;
+
+                let current = self.buffer[buffer_offset];
+
+                let mask = whole_column[block];
+
+                self.buffer[buffer_offset] = (current & !mask) | (color & mask);
+            }
+        }
+
+        Ok(())
     }
 }
 
