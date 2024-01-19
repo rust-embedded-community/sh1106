@@ -12,6 +12,7 @@ and works with the [embedded-hal](crates.io/crates/embedded-hal) traits for maxi
 
 - **(breaking)** [#28](https://github.com/jamwaffles/sh1106/pull/28) Upgrade MSRV to 1.50.0, add a
   faster implementation of `DrawTarget::fill_solid`.
+- **(breaking)** Switch to embedded-hal 1
 
 ## [0.5.0] - 2023-08-30
 
