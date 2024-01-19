@@ -11,27 +11,24 @@ use crate::Error;
 pub struct SpiInterface<SPI, DC, CS> {
     spi: SPI,
     dc: DC,
-    cs: CS,
 }
 
 impl<SPI, DC, CS, CommE, PinE> SpiInterface<SPI, DC, CS>
 where
     // we shouldn't need the whole bus but we need to flush before setting dc
-    SPI: hal::spi::SpiBus<u8, Error = CommE>,
+    SPI: hal::spi::SpiDevice<u8, Error = CommE>,
     DC: OutputPin<Error = PinE>,
-    CS: OutputPin<Error = PinE>,
 {
     /// Create new SPI interface for communciation with sh1106
     pub fn new(spi: SPI, dc: DC, cs: CS) -> Self {
-        Self { spi, dc, cs }
+        Self { spi, dc }
     }
 }
 
 impl<SPI, DC, CS, CommE, PinE> DisplayInterface for SpiInterface<SPI, DC, CS>
 where
-    SPI: hal::spi::SpiBus<u8, Error = CommE>,
+    SPI: hal::spi::SpiDevice<u8, Error = CommE>,
     DC: OutputPin<Error = PinE>,
-    CS: OutputPin<Error = PinE>,
 {
     type Error = Error<CommE, PinE>;
 
@@ -40,25 +37,14 @@ where
     }
 
     fn send_commands(&mut self, cmds: &[u8]) -> Result<(), Self::Error> {
-        self.cs.set_low().map_err(Error::Pin)?;
         self.dc.set_low().map_err(Error::Pin)?;
-
         self.spi.write(&cmds).map_err(Error::Comm)?;
-        self.spi.flush().map_err(Error::Comm)?;
-
-        self.dc.set_high().map_err(Error::Pin)?;
-        self.cs.set_high().map_err(Error::Pin)
+        self.dc.set_high().map_err(Error::Pin)
     }
 
     fn send_data(&mut self, buf: &[u8]) -> Result<(), Self::Error> {
-        self.cs.set_low().map_err(Error::Pin)?;
-
         // 1 = data, 0 = command
         self.dc.set_high().map_err(Error::Pin)?;
-
-        self.spi.write(&buf).map_err(Error::Comm)?;
-        self.spi.flush().map_err(Error::Comm)?;
-
-        self.cs.set_high().map_err(Error::Pin)
+        self.spi.write(&buf).map_err(Error::Comm)
     }
 }
