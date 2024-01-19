@@ -47,7 +47,7 @@ use crate::{
     mode::displaymode::DisplayModeTrait, properties::DisplayProperties, Error,
 };
 use embedded_graphics_core::{prelude::Point, primitives::Rectangle};
-use hal::{blocking::delay::DelayMs, digital::v2::OutputPin};
+use hal::{delay::DelayNs, digital::OutputPin};
 
 const BUFFER_SIZE: usize = 132 * 64 / 8;
 
@@ -95,7 +95,7 @@ where
     ) -> Result<(), Error<(), PinE>>
     where
         RST: OutputPin<Error = PinE>,
-        DELAY: DelayMs<u8>,
+        DELAY: DelayNs,
     {
         rst.set_high().map_err(Error::Pin)?;
         delay.delay_ms(1);

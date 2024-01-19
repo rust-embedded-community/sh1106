@@ -13,7 +13,7 @@ pub struct I2cInterface<I2C> {
 
 impl<I2C> I2cInterface<I2C>
 where
-    I2C: hal::blocking::i2c::Write,
+    I2C: hal::i2c::I2c,
 {
     /// Create new sh1106 I2C interface
     pub fn new(i2c: I2C, addr: u8) -> Self {
@@ -23,7 +23,7 @@ where
 
 impl<I2C, CommE> DisplayInterface for I2cInterface<I2C>
 where
-    I2C: hal::blocking::i2c::Write<Error = CommE>,
+    I2C: hal::i2c::I2c<Error = CommE>,
 {
     type Error = Error<CommE, ()>;
 

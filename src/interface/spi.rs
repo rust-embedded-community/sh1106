@@ -1,6 +1,6 @@
 //! sh1106 SPI interface
 
-use hal::{self, digital::v2::OutputPin};
+use hal::{self, digital::OutputPin};
 
 use super::DisplayInterface;
 use crate::Error;
@@ -16,7 +16,8 @@ pub struct SpiInterface<SPI, DC, CS> {
 
 impl<SPI, DC, CS, CommE, PinE> SpiInterface<SPI, DC, CS>
 where
-    SPI: hal::blocking::spi::Write<u8, Error = CommE>,
+    // we shouldn't need the whole bus but we need to flush before setting dc
+    SPI: hal::spi::SpiBus<u8, Error = CommE>,
     DC: OutputPin<Error = PinE>,
     CS: OutputPin<Error = PinE>,
 {
@@ -28,7 +29,7 @@ where
 
 impl<SPI, DC, CS, CommE, PinE> DisplayInterface for SpiInterface<SPI, DC, CS>
 where
-    SPI: hal::blocking::spi::Write<u8, Error = CommE>,
+    SPI: hal::spi::SpiBus<u8, Error = CommE>,
     DC: OutputPin<Error = PinE>,
     CS: OutputPin<Error = PinE>,
 {
@@ -43,6 +44,7 @@ where
         self.dc.set_low().map_err(Error::Pin)?;
 
         self.spi.write(&cmds).map_err(Error::Comm)?;
+        self.spi.flush().map_err(Error::Comm)?;
 
         self.dc.set_high().map_err(Error::Pin)?;
         self.cs.set_high().map_err(Error::Pin)
@@ -55,6 +57,7 @@ where
         self.dc.set_high().map_err(Error::Pin)?;
 
         self.spi.write(&buf).map_err(Error::Comm)?;
+        self.spi.flush().map_err(Error::Comm)?;
 
         self.cs.set_high().map_err(Error::Pin)
     }
