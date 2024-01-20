@@ -42,12 +42,12 @@
 //! display.flush().unwrap();
 //! ```
 
-use hal::{blocking::delay::DelayMs, digital::v2::OutputPin};
-
 use crate::{
     displayrotation::DisplayRotation, interface::DisplayInterface,
     mode::displaymode::DisplayModeTrait, properties::DisplayProperties, Error,
 };
+use embedded_graphics_core::{prelude::Point, primitives::Rectangle};
+use hal::{delay::DelayNs, digital::OutputPin};
 
 const BUFFER_SIZE: usize = 132 * 64 / 8;
 
@@ -95,7 +95,7 @@ where
     ) -> Result<(), Error<(), PinE>>
     where
         RST: OutputPin<Error = PinE>,
-        DELAY: DelayMs<u8>,
+        DELAY: DelayNs,
     {
         rst.set_high().map_err(Error::Pin)?;
         delay.delay_ms(1);
@@ -223,6 +223,50 @@ where
             .for_each(|Pixel(pos, color)| {
                 self.set_pixel(pos.x as u32, pos.y as u32, color.is_on().into())
             });
+
+        Ok(())
+    }
+
+    fn fill_solid(&mut self, area: &Rectangle, color: Self::Color) -> Result<(), Self::Error> {
+        let Rectangle {
+            top_left: Point { x, y },
+            size: Size { width, height },
+        } = area.intersection(&self.bounding_box());
+        // swap coordinates if rotated
+        let (x, y, width, height) = match self.properties.get_rotation() {
+            DisplayRotation::Rotate0 | DisplayRotation::Rotate180 => (x, y, width, height),
+            DisplayRotation::Rotate90 | DisplayRotation::Rotate270 => (y, x, height, width),
+        };
+
+        let color = if color.is_on() { 0xff } else { 0x00 };
+
+        let display_width = self.properties.get_size().dimensions().0 as u32;
+
+        // Display is at most 128 pixels tall when rotated by 90º or 270º so we'll use a u128 here
+        let fill = 2u128.pow(height) - 1;
+        let moved = fill << y;
+
+        let start_block = (y / 8) as usize;
+
+        // Represents a bit mask of a single column of the entire display height
+        let whole_column = moved.to_le_bytes();
+
+        let end_block = start_block + (height as usize / 8 + 1);
+
+        // Ensure we don't wrap off the bottom of the screen
+        let end_block = end_block.min(7);
+
+        for current_x in x..(x + width as i32) {
+            for block in start_block..=end_block {
+                let buffer_offset = current_x as usize + display_width as usize * block;
+
+                let current = self.buffer[buffer_offset];
+
+                let mask = whole_column[block];
+
+                self.buffer[buffer_offset] = (current & !mask) | (color & mask);
+            }
+        }
 
         Ok(())
     }

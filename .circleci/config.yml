@@ -6,6 +6,9 @@ target_steps: &target_steps
     - restore_cache:
         key: v2-sh1106-{{ .Environment.CIRCLE_JOB }}-{{ checksum "Cargo.toml" }}
     - run: rustup default ${RUST_VERSION:-stable}
+    # For docs gen
+    - run: rustup target add thumbv7m-none-eabi
+    - run: rustup target add thumbv7em-none-eabihf
     - run: rustup component add rustfmt
     - run: |
         SYSROOT=$(rustc --print sysroot)
