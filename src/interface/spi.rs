@@ -8,33 +8,31 @@ use crate::Error;
 /// SPI display interface.
 ///
 /// This combines the SPI peripheral and a data/command pin
-pub struct SpiInterface<SPI, DC, CS> {
+pub struct SpiInterface<SPI, DC> {
     spi: SPI,
     dc: DC,
 }
 
-impl<SPI, DC, CS, CommE, PinE> SpiInterface<SPI, DC, CS>
+impl<SPI, DC, CommE, PinE> SpiInterface<SPI, DC>
 where
     // we shouldn't need the whole bus but we need to flush before setting dc
     SPI: hal::spi::SpiDevice<u8, Error = CommE>,
     DC: OutputPin<Error = PinE>,
 {
     /// Create new SPI interface for communciation with sh1106
-    pub fn new(spi: SPI, dc: DC, cs: CS) -> Self {
+    pub fn new(spi: SPI, dc: DC) -> Self {
         Self { spi, dc }
     }
 }
 
-impl<SPI, DC, CS, CommE, PinE> DisplayInterface for SpiInterface<SPI, DC, CS>
+impl<SPI, DC, CommE, PinE> DisplayInterface for SpiInterface<SPI, DC>
 where
     SPI: hal::spi::SpiDevice<u8, Error = CommE>,
     DC: OutputPin<Error = PinE>,
 {
     type Error = Error<CommE, PinE>;
 
-    fn init(&mut self) -> Result<(), Self::Error> {
-        self.cs.set_high().map_err(Error::Pin)
-    }
+    fn init(&mut self) -> Result<(), Self::Error> { Ok(()) }
 
     fn send_commands(&mut self, cmds: &[u8]) -> Result<(), Self::Error> {
         self.dc.set_low().map_err(Error::Pin)?;

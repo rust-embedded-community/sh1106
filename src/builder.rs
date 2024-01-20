@@ -131,23 +131,21 @@ impl Builder {
     /// If the Chip Select (CS) pin is not required, [`NoOutputPin`] can be used as a dummy argument
     ///
     /// [`NoOutputPin`]: ./struct.NoOutputPin.html
-    pub fn connect_spi<SPI, DC, CS, CommE, PinE>(
+    pub fn connect_spi<SPI, DC, CommE, PinE>(
         self,
         spi: SPI,
         dc: DC,
-        cs: CS,
-    ) -> DisplayMode<RawMode<SpiInterface<SPI, DC, CS>>>
+    ) -> DisplayMode<RawMode<SpiInterface<SPI, DC>>>
     where
-        SPI: hal::spi::SpiBus<Error = CommE>,
+        SPI: hal::spi::SpiDevice<Error = CommE>,
         DC: OutputPin<Error = PinE>,
-        CS: OutputPin<Error = PinE>,
     {
         let properties = DisplayProperties::new(
-            SpiInterface::new(spi, dc, cs),
+            SpiInterface::new(spi, dc),
             self.display_size,
             self.rotation,
         );
-        DisplayMode::<RawMode<SpiInterface<SPI, DC, CS>>>::new(properties)
+        DisplayMode::<RawMode<SpiInterface<SPI, DC>>>::new(properties)
     }
 }
 
