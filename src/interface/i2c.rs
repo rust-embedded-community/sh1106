@@ -19,6 +19,11 @@ where
     pub fn new(i2c: I2C, addr: u8) -> Self {
         Self { i2c, addr }
     }
+
+    /// Release i2c
+    pub fn release(self) -> I2C {
+        self.i2c
+    }
 }
 
 impl<I2C, CommE> DisplayInterface for I2cInterface<I2C>

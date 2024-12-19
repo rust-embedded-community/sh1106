@@ -75,6 +75,11 @@ where
         Ok(())
     }
 
+    /// Set Display Off
+    pub fn off(&mut self) -> Result<(), DI::Error> {
+        Command::DisplayOn(false).send(&mut self.iface)
+    }
+
     /// Set the position in the framebuffer of the display where any sent data should be
     /// drawn. This method can be used for changing the affected area on the screen as well
     /// as (re-)setting the start point of the next `draw` call.
@@ -166,5 +171,10 @@ where
     /// Set the display contrast
     pub fn set_contrast(&mut self, contrast: u8) -> Result<(), DI::Error> {
         Command::Contrast(contrast).send(&mut self.iface)
+    }
+
+    /// Release iface
+    pub fn release(self) -> DI {
+        self.iface
     }
 }
